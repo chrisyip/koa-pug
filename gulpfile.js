@@ -11,7 +11,8 @@ gulp.task('jshint', function () {
   return gulp
           .src([
             'gulpfile.js',
-            'index.js'
+            'index.js',
+            'example/app.js'
           ])
           .pipe(jshint())
           .pipe(jshint.reporter(stylish))

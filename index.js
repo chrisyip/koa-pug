@@ -1,12 +1,11 @@
 /* jshint noyield: true */
 
-var pkg, fs, path, jade, merge, _, rootPath
+var pkg, fs, path, jade, _, rootPath
 
 pkg = require('./package.json')
 fs = require('fs-extra')
 path = require('path')
 jade = require('jade')
-merge = require('merge')
 _ = require('lodash')
 rootPath = process.cwd()
 
@@ -46,12 +45,12 @@ function Jade () {
           if (force !== true && cachedCompiler[tplPath]) {
             compiler = cachedCompiler[tplPath]
           } else {
-            cachedCompiler[tplPath] = compiler = jade.compile(rawJade, merge(true, defaultOptions, {
+            cachedCompiler[tplPath] = compiler = jade.compile(rawJade, _.merge({}, defaultOptions, {
               filename: tplPath
             }))
           }
 
-          this.body = compiler(merge(true, defaultLocals, locals))
+          this.body = compiler(_.merge({}, defaultLocals, locals))
         }
       }
     },
@@ -59,7 +58,7 @@ function Jade () {
     'configure': {
       enumerable: true,
       value: function (options) {
-        if (_.isPlainObject(options)) {
+        if (!_.isPlainObject(options)) {
           options = {}
         }
 
