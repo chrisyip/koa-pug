@@ -14,6 +14,7 @@ function Jade () {
         compileDebug: false,
         pretty: false
       }
+    , noCache = false
     , cachedCompiler = {}
     , defaultLocals, viewPath
 
@@ -31,9 +32,10 @@ function Jade () {
       enumerable: true,
       value: function () {
         /**
-         * @param {String} tpl    the template path, search start from viewPath
-         * @param {Object} locals locals that pass to Jade compiler, merged with global locals
-         * @param {Boolean} force force to compile template instead of use cached compiler
+         * @param {String}  tpl    the template path, search start from viewPath
+         * @param {Object}  locals locals that pass to Jade compiler, merged with global locals
+         * @param {Boolean} force  true  - force to re-compile template instead of use cached compiler
+         *                         false - force to use cached compiler
          */
         return function* (tpl, locals, force) {
           var tplPath, rawJade, compiler
@@ -42,12 +44,18 @@ function Jade () {
 
           rawJade = fs.readFileSync(tplPath)
 
-          if (force !== true && cachedCompiler[tplPath]) {
+          if (force === false) {
             compiler = cachedCompiler[tplPath]
-          } else {
-            cachedCompiler[tplPath] = compiler = jade.compile(rawJade, _.merge({}, defaultOptions, {
-              filename: tplPath
-            }))
+          }
+
+          if (!compiler) {
+            if (noCache === true || force === true || !cachedCompiler[tplPath]) {
+              cachedCompiler[tplPath] = compiler = jade.compile(rawJade, _.merge({}, defaultOptions, {
+                filename: tplPath
+              }))
+            } else {
+              compiler = cachedCompiler[tplPath]
+            }
           }
 
           this.body = compiler(_.merge({}, defaultLocals, locals))
@@ -66,6 +74,10 @@ function Jade () {
 
         if (_.isPlainObject(options.locals)) {
           defaultLocals = options.locals
+        }
+
+        if (_.isBoolean(options.noCache)) {
+          noCache = options.noCache
         }
 
         if (_.isBoolean(options.debug)) {
