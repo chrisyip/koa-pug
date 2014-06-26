@@ -61,4 +61,4 @@ By default, `koa-jade` stores the results of `Jade.compile` as caches. If want t
 
 # Contributors
 
-- [Chris Yip](http://github.com/chrisyip/qwery/commits/master?author=chrisyip)
+- [Chris Yip](http://github.com/chrisyip/koa-jade/commits/master?author=chrisyip)
