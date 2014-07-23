@@ -54,6 +54,15 @@ By default, `koa-jade` stores the results of `Jade.compile` as caches. If want t
 
 `force` can be ommited.
 
+## Content-Type
+
+Koa-jade sets `content-type` to `text/html` automatically. if wanna change it, do like this:
+
+```js
+yield this.render('index')
+this.type = 'text/plain'
+```
+
 # Todo
 
 - cache for generated HTML file
