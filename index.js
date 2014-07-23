@@ -59,6 +59,7 @@ function Jade () {
           }
 
           this.body = compiler(_.merge({}, defaultLocals, locals))
+          this.type = 'text/html'
         }
       }
     },
