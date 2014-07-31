@@ -18,7 +18,8 @@ app.use(jade.middleware({
   debug: false,
   pretty: false,
   compileDebug: false,
-  locals: global_locals_for_all_pages
+  locals: global_locals_for_all_pages,
+  helperPath: 'path/to/jade/helpers'
 }))
 
 app.use(function* () {
@@ -39,6 +40,8 @@ app.listen(3000)
 `locals`: variables that will be passed to Jade templates.
 
 `noCache`: if `true`, re-compile templates when page refreshed; if `false`, use cached compiler first. Can be overrided by `render`'s `force`.
+
+`helperPath`: where to load helpers, and make them available on all `.jade`.
 
 ## Methods
 
@@ -61,6 +64,45 @@ Koa-jade sets `content-type` to `text/html` automatically. if wanna change it, d
 ```js
 yield this.render('index')
 this.type = 'text/plain'
+```
+
+## Global Helpers
+
+By setting `helperPath`, koa-jade will load all the modules that under sepecified folder, and make them available on all templates.
+
+### Defining Helper
+
+```js
+// format-date.js
+module.exports = function (input) {
+    if (input instanceof Date) {
+      return (input.getMonth() + 1) + '/' + input.getDate() + '/' + input.getFullYear()
+    }
+
+    return input
+}
+```
+
+It equals to:
+
+```js
+// whatever.js
+module.exports = {
+  moduleName: 'formatDate',
+  moduleBody: function (input) {
+    if (input instanceof Date) {
+      return (input.getMonth() + 1) + '/' + input.getDate() + '/' + input.getFullYear()
+    }
+
+    return input
+  }
+}
+```
+
+In Jade:
+
+```jade
+p= formatDate(new Date())
 ```
 
 # Todo

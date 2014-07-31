@@ -5,6 +5,7 @@ var koa = require('koa')
 app.use(jade.middleware({
   viewPath: __dirname + '/views',
   debug: true,
+  helperPath: __dirname + '/helpers',
   locals: {
     page_title: 'Koa-jade example',
     author: 'Chris Yip',

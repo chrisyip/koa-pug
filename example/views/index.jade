@@ -23,7 +23,8 @@ block content
       debug: false,
       pretty: false,
       compileDebug: false,
-      locals: global_locals_for_all_pages
+      locals: global_locals_for_all_pages,
+      helperPath: 'helpers/'
     }))
 
     app.use(function* () {
@@ -33,5 +34,7 @@ block content
     app.listen(3000)
     ```
 
+  p Helper demo:&nbsp;
+    = format(new Date())
 block footer
   include partial/footer

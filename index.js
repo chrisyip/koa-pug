@@ -9,6 +9,38 @@ jade = require('jade')
 _ = require('lodash')
 rootPath = process.cwd()
 
+// http://stackoverflow.com/a/10425344
+function toCamelCase (input) {
+  return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
+    return group1.toUpperCase()
+  })
+}
+
+function loadHelpers (dir) {
+  var helpers = {}
+
+  _.forEach(fs.readdirSync(dir), function (file) {
+    var fullPath, stat
+
+    fullPath = path.resolve(dir + '/' + file)
+    stat = fs.statSync(fullPath)
+
+    if (stat.isDirectory()) {
+      loadHelpers(fullPath)
+    } else if (stat.isFile()) {
+      var module = require(fullPath)
+
+      if (_.isString(module.moduleName)) {
+        helpers[module.moduleName] = module.moduleBody
+      } else {
+        helpers[toCamelCase(path.basename(file).replace(path.extname(file), ''))] = module
+      }
+    }
+  })
+
+  return helpers
+}
+
 function Jade () {
   var defaultOptions = {
         compileDebug: false,
@@ -79,6 +111,10 @@ function Jade () {
 
         if (_.isBoolean(options.noCache)) {
           noCache = options.noCache
+        }
+
+        if (_.isString(options.helperPath)) {
+          _.merge(defaultLocals, loadHelpers(options.helperPath))
         }
 
         if (_.isBoolean(options.debug)) {
