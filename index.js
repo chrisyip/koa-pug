@@ -16,27 +16,60 @@ function toCamelCase (input) {
   })
 }
 
-function loadHelpers (dir) {
+//
+function loadHelpers (dirs) {
   var helpers = {}
 
-  _.forEach(fs.readdirSync(dir), function (file) {
-    var fullPath, stat
+  if (_.isArray(dirs)) {
+    _.forEach(dirs, function (item) {
+      if (_.isObject(item)) {
+        _.forIn(item, function (value, key) {
+          if (_.isString(value) && _.isString(key)) {
+            load(path.resolve(value), key)
+          }
+        })
+      } else if (_.isString(item)) {
+        load(item)
+      }
+    });
+  } else {
+    load(dirs)
+  }
 
-    fullPath = path.resolve(dir + '/' + file)
+  function load (dir, moduleName) {
+    var fullPath, stat, module
+
+    fullPath = path.resolve(dir)
+
+    if (!fs.existsSync(fullPath)) {
+      // support node module as a helper
+      module = require(path.basename(dir))
+      if (_.isString(moduleName)) {
+        helpers[moduleName] = module
+      } else {
+        helpers[toCamelCase(path.basename(fullPath, path.extname(fullPath)))] = module
+      }
+      return
+    }
+
     stat = fs.statSync(fullPath)
 
     if (stat.isDirectory()) {
-      loadHelpers(fullPath)
+      _.forEach(fs.readdirSync(dir), function (file) {
+        load(dir + '/' + file)
+      })
     } else if (stat.isFile()) {
-      var module = require(fullPath)
+      module = require(fullPath)
 
-      if (_.isString(module.moduleName)) {
+      if (_.isString(moduleName)) {
+        helpers[moduleName] = module
+      } else if (_.isString(module.moduleName)) {
         helpers[module.moduleName] = module.moduleBody
       } else {
-        helpers[toCamelCase(path.basename(file).replace(path.extname(file), ''))] = module
+        helpers[toCamelCase(path.basename(fullPath, path.extname(fullPath)))] = module
       }
     }
-  })
+  }
 
   return helpers
 }
@@ -113,7 +146,7 @@ function Jade () {
           noCache = options.noCache
         }
 
-        if (_.isString(options.helperPath)) {
+        if (_.isString(options.helperPath) || _.isArray(options.helperPath)) {
           _.merge(defaultLocals, loadHelpers(options.helperPath))
         }
 
