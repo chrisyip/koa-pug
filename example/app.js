@@ -8,7 +8,7 @@ app.use(jade.middleware({
   helperPath: [
     __dirname + '/helpers',
     { 'random': './lib/random.js' },
-    { '_': 'lodash' }
+    { '_': require('lodash') }
   ],
   locals: {
     page_title: 'Koa-jade example',

@@ -19,7 +19,11 @@ app.use(jade.middleware({
   pretty: false,
   compileDebug: false,
   locals: global_locals_for_all_pages,
-  helperPath: ['path/to/jade/helpers', { random: 'path/to/lib.js' }]
+  helperPath: [
+    'path/to/jade/helpers',
+    { random: 'path/to/lib.js' },
+    { _: require('lodash') }
+  ]
 }))
 
 app.use(function* () {
@@ -70,7 +74,7 @@ this.type = 'text/plain'
 
 By setting `helperPath`, koa-jade will load all the modules that under sepecified folxder, and make them available on all templates.
 
-`helperPath` also could be an array including folders, files path, even `moduleName: 'path/to/lib.js` mapping object. Also support node module as a helper, just like: `'_': 'lodash'`
+`helperPath` also could be an array including folders, files path, even `moduleName: 'path/to/lib.js` mapping object. Also support node module as a helper, just like: `'_': require('lodash')`
 
 ### Defining Helper
 

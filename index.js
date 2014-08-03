@@ -24,8 +24,12 @@ function loadHelpers (dirs) {
     _.forEach(dirs, function (item) {
       if (_.isObject(item)) {
         _.forIn(item, function (value, key) {
-          if (_.isString(value) && _.isString(key)) {
-            load(path.resolve(value), key)
+          if (_.isString(key)) {
+            if (_.isString(value)) {
+              load(value, key)
+            } else {
+              helpers[key] = value
+            }
           }
         })
       } else if (_.isString(item)) {
@@ -40,18 +44,6 @@ function loadHelpers (dirs) {
     var fullPath, stat, module
 
     fullPath = path.resolve(dir)
-
-    if (!fs.existsSync(fullPath)) {
-      // support node module as a helper
-      module = require(path.basename(dir))
-      if (_.isString(moduleName)) {
-        helpers[moduleName] = module
-      } else {
-        helpers[toCamelCase(path.basename(fullPath, path.extname(fullPath)))] = module
-      }
-      return
-    }
-
     stat = fs.statSync(fullPath)
 
     if (stat.isDirectory()) {
