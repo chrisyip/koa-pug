@@ -24,7 +24,11 @@ block content
       pretty: false,
       compileDebug: false,
       locals: global_locals_for_all_pages,
-      helperPath: 'helpers/'
+      helperPath: [
+        'helpers/',
+        { 'random': './lib/random.js' },
+        { '_': require('lodash') }
+      ]
     }))
 
     app.use(function* () {
@@ -34,7 +38,14 @@ block content
     app.listen(3000)
     ```
 
-  p Helper demo:&nbsp;
-    = format(new Date())
+  h2 Helper demo:&nbsp;
+    p
+      = format(new Date())
+    p
+      = random(10, 1)
+    p
+      = _.first([1, 2, 3])
+
+
 block footer
   include partial/footer

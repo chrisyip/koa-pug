@@ -19,7 +19,11 @@ app.use(jade.middleware({
   pretty: false,
   compileDebug: false,
   locals: global_locals_for_all_pages,
-  helperPath: 'path/to/jade/helpers'
+  helperPath: [
+    'path/to/jade/helpers',
+    { random: 'path/to/lib.js' },
+    { _: require('lodash') }
+  ]
 }))
 
 app.use(function* () {
@@ -41,7 +45,7 @@ app.listen(3000)
 
 `noCache`: if `true`, re-compile templates when page refreshed; if `false`, use cached compiler first. Can be overrided by `render`'s `force`.
 
-`helperPath`: where to load helpers, and make them available on all `.jade`.
+`helperPath`: String or Array, where to load helpers, and make them available on all `.jade`. In Array, you can use object to assgin name for module, eg: `{ random: './path/to/random.js' }`
 
 ## Methods
 
@@ -68,7 +72,9 @@ this.type = 'text/plain'
 
 ## Global Helpers
 
-By setting `helperPath`, koa-jade will load all the modules that under sepecified folder, and make them available on all templates.
+By setting `helperPath`, koa-jade will load all the modules that under sepecified folxder, and make them available on all templates.
+
+`helperPath` also could be an array including folders, files path, even `moduleName: 'path/to/lib.js` mapping object. Also support node module as a helper, just like: `'_': require('lodash')`
 
 ### Defining Helper
 

@@ -5,7 +5,11 @@ var koa = require('koa')
 app.use(jade.middleware({
   viewPath: __dirname + '/views',
   debug: true,
-  helperPath: __dirname + '/helpers',
+  helperPath: [
+    __dirname + '/helpers',
+    { 'random': './lib/random.js' },
+    { '_': require('lodash') }
+  ],
   locals: {
     page_title: 'Koa-jade example',
     author: 'Chris Yip',
