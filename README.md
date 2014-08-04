@@ -118,4 +118,4 @@ p= formatDate(new Date())
 
 # Contributors
 
-- [Chris Yip](http://github.com/chrisyip/koa-jade/commits/master?author=chrisyip)
+Via [GitHub](https://github.com/chrisyip/koa-jade/graphs/contributors)

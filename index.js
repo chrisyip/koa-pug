@@ -16,7 +16,6 @@ function toCamelCase (input) {
   })
 }
 
-//
 function loadHelpers (dirs) {
   var helpers = {}
 
