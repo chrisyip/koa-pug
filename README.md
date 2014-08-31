@@ -1,4 +1,4 @@
-# Koa-jade
+# Koa-jade [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
 A [Jade](http://jade-lang.com/) middleware for [Koa](http://koajs.com/).
 
@@ -119,3 +119,8 @@ p= formatDate(new Date())
 # Contributors
 
 Via [GitHub](https://github.com/chrisyip/koa-jade/graphs/contributors)
+
+[npm-url]: https://npmjs.org/package/koa-jade
+[npm-image]: https://badge.fury.io/js/koa-jade.svg
+[daviddm-url]: https://david-dm.org/chrisyip/koa-jade
+[daviddm-image]: https://david-dm.org/chrisyip/koa-jade.svg
