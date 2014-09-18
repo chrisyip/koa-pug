@@ -12,7 +12,8 @@
   },
   "homepage": "https://github.com/chrisyip/koa-jade",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "test-travis": "gulp test"
   },
   "keywords": [
     "koa",
@@ -37,6 +38,6 @@
     "marked": "*"
   },
   "engines": {
-    "node": ">= 0.11.9"
+    "node": ">=0.11.9"
   }
 }
