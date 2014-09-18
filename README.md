@@ -1,4 +1,6 @@
-# Koa-jade [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url]
+# Koa-jade
+
+[![Node version][node-image]][npm-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Travis CI][travis-image]][travis-url]
 
 A [Jade](http://jade-lang.com/) middleware for [Koa](http://koajs.com/).
 
@@ -19,6 +21,7 @@ app.use(jade.middleware({
   pretty: false,
   compileDebug: false,
   locals: global_locals_for_all_pages,
+  basedir: 'path/for/jade/extends',
   helperPath: [
     'path/to/jade/helpers',
     { random: 'path/to/lib.js' },
@@ -45,21 +48,50 @@ app.listen(3000)
 
 `noCache`: if `true`, re-compile templates when page refreshed; if `false`, use cached compiler first. Can be overrided by `render`'s `force`.
 
-`helperPath`: String or Array, where to load helpers, and make them available on all `.jade`. In Array, you can use object to assgin name for module, eg: `{ random: './path/to/random.js' }`
+`helperPath`: String or Array, where to load helpers, and make them available on all `.jade`. In Array, you can use object to assgin name for module, eg: `{ random: './path/to/random.js' }`.
+
+`basedir`: help Jade to identify paths when using `extends` with `absolute` paths.
 
 ## Methods
 
-`middleware(options)`: configure and create a middleware.
+### middleware(options)
 
-`render(tpl, locals, force)`: render `tpl` with `locals`.
+Configure and create a middleware.
 
-By default, `koa-jade` stores the results of `Jade.compile` as caches. If want to control it manually, use the third argument - `force`:
+### render(tpl, locals, options, force)
 
-`true`: force to re-compile template instead of use cached compiler.
+Render template, and set rendered template to `this.body`.
 
-`false`: force to use cached compiler first.
+`tpl`: the path of template that based on `viewPath`, `.jade` is optional.
 
-`force` can be ommited.
+`locals`: locals for this page. Optional. If `options` or `force` presented, please use `{}`, `undefined` or `null` for empty `locals`.
+
+`options`: override global default options for this page. Only assigning an `object` or a `boolean` to it will take effects.
+
+`force`: tell Jade if force to re-compile template instead loading it from cache. By default, `koa-jade` stores the results of `Jade.compile` in memories, in order to speed up the future request. By setting force to `true` or `false` will force these behaviors: `true` - force to re-compile template instead of use cached compiler, `false` - force to use cached compiler first.
+
+If `options` is set to `true` or `false`, will be treated as `force`, and `force` will be ignored. For example, `render(tpl, locals, true)` equals to `render(tpl, locals, {}, true)`, `render(tpl, locals, true, false)` will force re-compilation.
+
+`options` and `force` are optional.
+
+## basedir
+
+If you encounter this error, `Error: the "basedir" option is required to use "extends" with "absolute" paths`, try to set `basedir` like this:
+
+```js
+app.use(jade.middleware({
+  viewPath: 'path/to/views',
+  basedir: 'path/for/jade/extends'
+}))
+```
+
+or
+
+```js
+app.use(function* () {
+  yield this.render('index', locals, { basedir: 'path/for/jade/extends' })
+})
+```
 
 ## Content-Type
 
@@ -120,7 +152,10 @@ p= formatDate(new Date())
 
 Via [GitHub](https://github.com/chrisyip/koa-jade/graphs/contributors)
 
+[node-image]: http://img.shields.io/node/v/koa-jade.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/koa-jade
-[npm-image]: https://badge.fury.io/js/koa-jade.svg
+[npm-image]: http://img.shields.io/npm/v/koa-jade.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/chrisyip/koa-jade
-[daviddm-image]: https://david-dm.org/chrisyip/koa-jade.svg
+[daviddm-image]: http://img.shields.io/david/chrisyip/koa-jade.svg?style=flat-square
+[travis-url]: https://travis-ci.org/chrisyip/koa-jade
+[travis-image]: http://img.shields.io/travis/chrisyip/koa-jade.svg?style=flat-square

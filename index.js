@@ -88,27 +88,36 @@ function Jade () {
       enumerable: true,
       value: function () {
         /**
-         * @param {String}  tpl    the template path, search start from viewPath
-         * @param {Object}  locals locals that pass to Jade compiler, merged with global locals
-         * @param {Boolean} force  true  - force to re-compile template instead of use cached compiler
-         *                         false - force to use cached compiler
+         * @param {String}  tpl     the template path, search start from viewPath
+         * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
+         * @param {Object}  options options that pass to Jade compiler, merged with global default options
+         * @param {Boolean} force   true  - force to re-compile template instead of use cached compiler
+         *                          false - force to use cached compiler
          */
-        return function* (tpl, locals, force) {
-          var tplPath, rawJade, compiler
+        return function* (tpl, locals, options, force) {
+          var compileOptions, tplPath, rawJade, compiler, skipCache
 
           tplPath = path.join(viewPath, /\.jade$/.test(tpl) ? tpl : tpl + '.jade')
 
           rawJade = fs.readFileSync(tplPath)
 
-          if (force === false) {
+          compileOptions = _.merge({}, defaultOptions)
+
+          if (_.isPlainObject(options)) {
+            _.merge(compileOptions, options)
+          }
+
+          compileOptions.filename = tplPath
+
+          skipCache = options === true || force === true
+
+          if (!skipCache) {
             compiler = cachedCompiler[tplPath]
           }
 
           if (!compiler) {
-            if (noCache === true || force === true || !cachedCompiler[tplPath]) {
-              cachedCompiler[tplPath] = compiler = jade.compile(rawJade, _.merge({}, defaultOptions, {
-                filename: tplPath
-              }))
+            if (noCache === true || skipCache || !cachedCompiler[tplPath]) {
+              cachedCompiler[tplPath] = compiler = jade.compile(rawJade, compileOptions)
             } else {
               compiler = cachedCompiler[tplPath]
             }
@@ -150,6 +159,10 @@ function Jade () {
               defaultOptions[key] = options[key]
             }
           })
+        }
+
+        if (_.isString(options.basedir)) {
+          defaultOptions.basedir = options.basedir
         }
       }
     },
