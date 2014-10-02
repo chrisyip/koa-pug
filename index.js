@@ -95,31 +95,32 @@ function Jade () {
          *                          false - force to use cached compiler
          */
         return function* (tpl, locals, options, force) {
-          var compileOptions, tplPath, rawJade, compiler, skipCache
+          var compileOptions, tplPath, rawJade, compiler, skipCache, noForce
 
           tplPath = path.join(viewPath, /\.jade$/.test(tpl) ? tpl : tpl + '.jade')
-
-          rawJade = fs.readFileSync(tplPath)
 
           compileOptions = _.merge({}, defaultOptions)
 
           if (_.isPlainObject(options)) {
             _.merge(compileOptions, options)
+          } else if (typeof options === 'boolean') {
+            force = options
           }
 
           compileOptions.filename = tplPath
 
-          skipCache = options === true || force === true
+          noForce = typeof force === 'undefined'
+          skipCache = noForce && noCache || force
 
-          if (!skipCache) {
+          if (!force) {
             compiler = cachedCompiler[tplPath]
           }
 
           if (!compiler) {
-            if (noCache === true || skipCache || !cachedCompiler[tplPath]) {
-              cachedCompiler[tplPath] = compiler = jade.compile(rawJade, compileOptions)
-            } else {
-              compiler = cachedCompiler[tplPath]
+            rawJade = fs.readFileSync(tplPath)
+            compiler = jade.compile(rawJade, compileOptions)
+            if (!skipCache) {
+              cachedCompiler[tplPath] = compiler
             }
           }
 
