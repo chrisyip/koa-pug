@@ -70,8 +70,8 @@ function Jade () {
         compileDebug: false,
         pretty: false
       }
-    , noCache = false
-    , cachedCompiler = {}
+    , globalNoCache = false
+    , compilers = new Map()
     , defaultLocals, viewPath
 
   this.version = pkg.version
@@ -91,10 +91,9 @@ function Jade () {
          * @param {String}  tpl     the template path, search start from viewPath
          * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
          * @param {Object}  options options that pass to Jade compiler, merged with global default options
-         * @param {Boolean} force   true  - force to re-compile template instead of use cached compiler
-         *                          false - force to use cached compiler
+         * @param {Boolean} noCache use cache or not
          */
-        return function* (tpl, locals, options, force) {
+        return function* (tpl, locals, options, noCache) {
           var compileOptions, tplPath, rawJade, compiler, skipCache
 
           tplPath = path.join(viewPath, /\.jade$/.test(tpl) ? tpl : tpl + '.jade')
@@ -109,17 +108,16 @@ function Jade () {
 
           compileOptions.filename = tplPath
 
-          skipCache = options === true || force === true
+          skipCache = _.isBoolean(options) ? options : _.isBoolean(noCache) ? noCache : globalNoCache
 
-          if (!skipCache) {
-            compiler = cachedCompiler[tplPath]
-          }
+          if (skipCache) {
+            compiler = jade.compile(rawJade, compileOptions)
+          } else {
+            compiler = compilers.get(tplPath)
 
-          if (!compiler) {
-            if (noCache === true || skipCache || !cachedCompiler[tplPath]) {
-              cachedCompiler[tplPath] = compiler = jade.compile(rawJade, compileOptions)
-            } else {
-              compiler = cachedCompiler[tplPath]
+            if (!compiler) {
+              compiler = jade.compile(rawJade, compileOptions)
+              compilers.set(tplPath, compiler)
             }
           }
 
@@ -143,7 +141,7 @@ function Jade () {
         }
 
         if (_.isBoolean(options.noCache)) {
-          noCache = options.noCache
+          globalNoCache = options.noCache
         }
 
         if (_.isString(options.helperPath) || _.isArray(options.helperPath)) {
