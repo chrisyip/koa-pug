@@ -26,16 +26,16 @@
   },
   "license": "MIT",
   "dependencies": {
-    "jade": "~1.7.0",
-    "fs-extra": "~0.11",
+    "fs-extra": "^0.12.0",
+    "jade": "^1.7.0",
     "lodash": "*"
   },
   "devDependencies": {
-    "gulp": "^3.7",
-    "gulp-jshint": "^1.6",
-    "jshint-stylish": "*",
-    "koa": "^0.6",
-    "marked": "*"
+    "gulp": "^3.8.8",
+    "gulp-jshint": "^1.8.5",
+    "jshint-stylish": "^1.0.0",
+    "koa": "^0.12.2",
+    "marked": "^0.3.2"
   },
   "engines": {
     "node": ">=0.11.9"
