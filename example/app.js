@@ -18,6 +18,13 @@ app.use(jade.middleware({
   }
 }))
 
+app.use(function* (next) {
+  console.info('-->', this.method, this.url, 'ip', this.ip, 'ips', this.ips)
+  var start = Date.now()
+  yield next
+  console.info('<--', this.method, this.url, this.res.statusCode, (Date.now() - start) + 'ms')
+})
+
 app.use(function* () {
   yield this.render('index.jade', {
     title: 'Koa-jade: a Jade middleware for Koa'
