@@ -46,7 +46,7 @@ app.listen(3000)
 
 `locals`: variables that will be passed to Jade templates.
 
-`noCache`: if `true`, re-compile templates when page refreshed; if `false`, use cached compiler first. Can be overrided by `render`'s `force`.
+`noCache`: use cache or not. Cache could make template rendering 100x faster than without cache. It useful for production, but useless for development (pages would not be updated untill Koa restarted). In most case, `noCache: process.env === 'development'` should be enough. If wanna control it in production for specific page, use `render()`'s `noCache` instead.
 
 `helperPath`: String or Array, where to load helpers, and make them available on all `.jade`. In Array, you can use object to assgin name for module, eg: `{ random: './path/to/random.js' }`.
 
@@ -58,21 +58,21 @@ app.listen(3000)
 
 Configure and create a middleware.
 
-### render(tpl, locals, options, force)
+### render(tpl, locals, options, noCache)
 
 Render template, and set rendered template to `this.body`.
 
 `tpl`: the path of template that based on `viewPath`, `.jade` is optional.
 
-`locals`: locals for this page. Optional. If `options` or `force` presented, please use `{}`, `undefined` or `null` for empty `locals`.
+`locals`: locals for this page. Optional. If `options` or `noCache` presented, please use `{}`, `undefined` or `null` for empty `locals`.
 
 `options`: override global default options for this page. Only assigning an `object` or a `boolean` to it will take effects.
 
-`force`: tell Jade if force to re-compile template instead loading it from cache. By default, `koa-jade` stores the results of `Jade.compile` in memories, in order to speed up the future request. By setting force to `true` or `false` will force these behaviors: `true` - force to re-compile template instead of use cached compiler, `false` - force to use cached compiler first.
+`noCache`: use cache or not. Notes: 1. overrides global `noCache`; 2. won't affect other pages.
 
-If `options` is set to `true` or `false`, will be treated as `force`, and `force` will be ignored. For example, `render(tpl, locals, true)` equals to `render(tpl, locals, {}, true)`, `render(tpl, locals, true, false)` will force re-compilation.
+If `options` is set to `true` or `false`, it will be treated as `noCache`, and `noCache` will be ignored. For example, `render(tpl, locals, true)` equals to `render(tpl, locals, {}, true)`, and `render(tpl, locals, true, false)` will skip cache and re-compile template.
 
-`options` and `force` are optional.
+`options` and `noCache` are optional.
 
 ## basedir
 
