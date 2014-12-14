@@ -46,8 +46,6 @@ app.listen(3000)
 
 `locals`: variables that will be passed to Jade templates.
 
-`noCache`: use cache or not. Cache could make template rendering 100x faster than without cache. It useful for production, but useless for development (pages would not be updated untill Koa restarted). In most case, `noCache: process.env === 'development'` should be enough. If wanna control it in production for specific page, use `render()`'s `noCache` instead.
-
 `helperPath`: String or Array, where to load helpers, and make them available on all `.jade`. In Array, you can use object to assgin name for module, eg: `{ random: './path/to/random.js' }`.
 
 `basedir`: help Jade to identify paths when using `extends` with `absolute` paths.
@@ -67,12 +65,6 @@ Render template, and set rendered template to `this.body`.
 `locals`: locals for this page. Optional. If `options` or `noCache` presented, please use `{}`, `undefined` or `null` for empty `locals`.
 
 `options`: override global default options for this page. Only assigning an `object` or a `boolean` to it will take effects.
-
-`noCache`: use cache or not. Notes: 1. overrides global `noCache`; 2. won't affect other pages.
-
-If `options` is set to `true` or `false`, it will be treated as `noCache`, and `noCache` will be ignored. For example, `render(tpl, locals, true)` equals to `render(tpl, locals, {}, true)`, and `render(tpl, locals, true, false)` will skip cache and re-compile template.
-
-`options` and `noCache` are optional.
 
 ## basedir
 
