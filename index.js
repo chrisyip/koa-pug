@@ -70,8 +70,6 @@ function Jade () {
         compileDebug: false,
         pretty: false
       }
-    , globalNoCache = false
-    , compilers = new Map()
     , defaultLocals, viewPath
 
   this.version = pkg.version
@@ -91,10 +89,9 @@ function Jade () {
          * @param {String}  tpl     the template path, search start from viewPath
          * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
          * @param {Object}  options options that pass to Jade compiler, merged with global default options
-         * @param {Boolean} noCache use cache or not
          */
-        return function* (tpl, locals, options, noCache) {
-          var compileOptions, tplPath, rawJade, compiler, skipCache
+        return function* (tpl, locals, options) {
+          var compileOptions, tplPath, rawJade, compiler
 
           tplPath = path.join(viewPath, /\.jade$/.test(tpl) ? tpl : tpl + '.jade')
 
@@ -107,19 +104,7 @@ function Jade () {
           }
 
           compileOptions.filename = tplPath
-
-          skipCache = _.isBoolean(options) ? options : _.isBoolean(noCache) ? noCache : globalNoCache
-
-          if (skipCache) {
-            compiler = jade.compile(rawJade, compileOptions)
-          } else {
-            compiler = compilers.get(tplPath)
-
-            if (!compiler) {
-              compiler = jade.compile(rawJade, compileOptions)
-              compilers.set(tplPath, compiler)
-            }
-          }
+          compiler = jade.compile(rawJade, compileOptions)
 
           this.body = compiler(_.merge({}, defaultLocals, locals))
           this.type = 'text/html'
@@ -138,10 +123,6 @@ function Jade () {
 
         if (_.isPlainObject(options.locals)) {
           defaultLocals = options.locals
-        }
-
-        if (_.isBoolean(options.noCache)) {
-          globalNoCache = options.noCache
         }
 
         if (_.isString(options.helperPath) || _.isArray(options.helperPath)) {
