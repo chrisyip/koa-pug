@@ -67,12 +67,12 @@ function loadHelpers (dirs) {
 
 function Jade () {
   var defaultOptions = {
-        compileDebug: false,
-        pretty: false
-      }
-    , globalNoCache = false
-    , compilers = new Map()
-    , defaultLocals, viewPath
+    compileDebug: false,
+    pretty: false
+  }
+  , globalNoCache = false
+  , compilers = new Map()
+  , defaultLocals, viewPath
 
   this.version = pkg.version
 
@@ -93,7 +93,7 @@ function Jade () {
          * @param {Object}  options options that pass to Jade compiler, merged with global default options
          * @param {Boolean} noCache use cache or not
          */
-        return function* (tpl, locals, options, noCache) {
+         return function* (tpl, locals, options, noCache) {
           var compileOptions, tplPath, rawJade, compiler, skipCache
 
           tplPath = path.join(viewPath, /\.jade$/.test(tpl) ? tpl : tpl + '.jade')
@@ -119,6 +119,20 @@ function Jade () {
               compiler = jade.compile(rawJade, compileOptions)
               compilers.set(tplPath, compiler)
             }
+          }
+
+          if (!skipCache && this.request.header['if-modified-since']){
+            var lastModified = new Date(fs.statSync(tplPath).mtime)
+            var ifModifiedSince = new Date(this.request.header['if-modified-since'])
+            var notModified = Math.floor(+ifModifiedSince/1000/60) >= Math.floor(+lastModified/1000/60)
+
+            if (notModified){
+              this.status = 304
+              return
+            }
+            else this.set({
+              'Last-Modified': lastModified
+            })
           }
 
           this.body = compiler(_.merge({}, defaultLocals, locals))
