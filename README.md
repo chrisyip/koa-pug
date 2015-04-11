@@ -12,8 +12,8 @@ npm install koa-jade --save
 
 ```js
 var koa = require('koa')
-  , jade = require('koa-jade')
-  , app = koa()
+var jade = require('koa-jade')
+var app = koa()
 
 app.use(jade.middleware({
   viewPath: __dirname + '/views',
@@ -142,6 +142,26 @@ In Jade:
 ```jade
 p= formatDate(new Date())
 ```
+
+# How `koa-jade` resolves views
+
+For example, there's a folder structure like this:
+
+```
+- views
+  |--- foo.jade
+  |--- foo/
+    |--- index.jade
+  |--- bar/
+    |--- index.jade
+  |--- baz
+```
+
+For `this.render('foo')`, `koa-jade` will render `foo.jade`, not `foo/index.jade` (file has higher priority than directory). If you wanna render `foo/index.jade`, you have to use explicit path: `this.render('foo/index')`.
+
+For `this.render('bar')`, because `bar.jade` doesn't exist and `bar` is a directory, `koa-jade` will search for `bar/index.jade` and try to render it.
+
+For `this.render('baz')`, because `baz` is a file, and not end with `.jade`, `koa-jade` will throw an `ENOENT` error.
 
 # Todo
 

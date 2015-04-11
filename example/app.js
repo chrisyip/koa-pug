@@ -1,13 +1,15 @@
 var koa = require('koa')
-  , jade = require('..')
-  , app = koa()
+var jade = require('..')
+var router = require('koa-power-router/router')
+var path = require('path')
+var app = koa()
 
 app.use(jade.middleware({
-  viewPath: __dirname + '/views',
+  viewPath: path.resolve(__dirname, 'views'),
   debug: true,
   helperPath: [
-    __dirname + '/helpers',
-    { 'random': './lib/random.js' },
+    path.resolve(__dirname, 'helpers'),
+    { 'random': path.resolve(__dirname, './lib/random.js') },
     { '_': require('lodash') }
   ],
   locals: {
@@ -25,10 +27,28 @@ app.use(function* (next) {
   console.info('<--', this.method, this.url, this.res.statusCode, (Date.now() - start) + 'ms')
 })
 
-app.use(function* () {
+app.use(router())
+
+router.get('/', function* () {
   yield this.render('index.jade', {
     title: 'Koa-jade: a Jade middleware for Koa'
   })
+})
+
+router.get('/home', function* () {
+  yield this.render('home')
+})
+
+router.get('/foo', function* () {
+  yield this.render('foo')
+})
+
+router.get('/foo/index', function* () {
+  yield this.render('foo/index')
+})
+
+router.get('/bar', function* () {
+  yield this.render('bar')
 })
 
 app.listen(3000)

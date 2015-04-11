@@ -16,6 +16,18 @@ function toCamelCase (input) {
   })
 }
 
+function endsWith(str, substr) {
+  if (substr.length > str.length) {
+    return false
+  }
+
+  if (substr === str) {
+    return true
+  }
+
+  return str.lastIndexOf(substr) === str.length - substr.length
+}
+
 function loadHelpers (dirs) {
   var helpers = {}
 
@@ -96,7 +108,21 @@ function Jade () {
         return function* (tpl, locals, options, noCache) {
           var compileOptions, tplPath, rawJade, compiler, skipCache
 
-          tplPath = path.join(viewPath, /\.jade$/.test(tpl) ? tpl : tpl + '.jade')
+          if (endsWith(tpl, '.jade')) {
+            tplPath = path.resolve(viewPath, tpl)
+          } else {
+            // If view path doesn't end with `.jade`, add `.jade` and check if it exists
+            var dirname = path.resolve(viewPath, tpl)
+            tplPath = dirname + '.jade'
+
+            // If doesn't exist and the dirname is a folder, then search `index.jade` file
+            if (!fs.existsSync(tplPath)) {
+              var stat = fs.statSync(dirname)
+              if (stat.isDirectory()) {
+                tplPath = path.resolve(dirname, 'index.jade')
+              }
+            }
+          }
 
           rawJade = fs.readFileSync(tplPath)
 
