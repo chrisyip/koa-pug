@@ -105,7 +105,7 @@ function Jade () {
          * @param {Object}  options options that pass to Jade compiler, merged with global default options
          * @param {Boolean} noCache use cache or not
          */
-        return function* (tpl, locals, options, noCache) {
+        return function (tpl, locals, options, noCache) {
           var compileOptions, tplPath, rawJade, compiler, skipCache
 
           if (endsWith(tpl, '.jade')) {
@@ -149,6 +149,7 @@ function Jade () {
 
           this.body = compiler(_.merge({}, defaultLocals, locals))
           this.type = 'text/html'
+          return this
         }
       }
     },

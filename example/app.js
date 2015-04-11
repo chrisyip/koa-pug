@@ -30,25 +30,25 @@ app.use(function* (next) {
 app.use(router())
 
 router.get('/', function* () {
-  yield this.render('index.jade', {
+  this.render('index.jade', {
     title: 'Koa-jade: a Jade middleware for Koa'
   })
 })
 
 router.get('/home', function* () {
-  yield this.render('home')
+  this.render('home')
 })
 
 router.get('/foo', function* () {
-  yield this.render('foo')
+  this.render('foo')
 })
 
 router.get('/foo/index', function* () {
-  yield this.render('foo/index')
+  this.render('foo/index')
 })
 
 router.get('/bar', function* () {
-  yield this.render('bar')
+  this.render('bar')
 })
 
 app.listen(3000)

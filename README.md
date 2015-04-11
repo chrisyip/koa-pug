@@ -30,10 +30,19 @@ app.use(jade.middleware({
 }))
 
 app.use(function* () {
-  yield this.render('index', locals_for_this_page, true)
+  this.render('index', locals_for_this_page, true)
 })
 
 app.listen(3000)
+```
+
+Normal function vs. generator function:
+
+```
+iojs 1.6.4
+Normal function x 163,231 ops/sec ±1.33% (180 runs sampled)
+Generator function x 74,904 ops/sec ±1.86% (173 runs sampled)
+Fastest is Normal function
 ```
 
 ## Options
@@ -89,7 +98,7 @@ or
 
 ```js
 app.use(function* () {
-  yield this.render('index', locals, { basedir: 'path/for/jade/extends' })
+  this.render('index', locals, { basedir: 'path/for/jade/extends' })
 })
 ```
 
@@ -98,7 +107,7 @@ app.use(function* () {
 Koa-jade sets `content-type` to `text/html` automatically. if wanna change it, do like this:
 
 ```js
-yield this.render('index')
+this.render('index')
 this.type = 'text/plain'
 ```
 
