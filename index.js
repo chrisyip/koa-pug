@@ -84,7 +84,8 @@ function Jade () {
       }
     , globalNoCache = false
     , compilers = new Map()
-    , defaultLocals, viewPath
+    , defaultLocals = {}
+    , viewPath
 
   this.version = pkg.version
 
