@@ -148,6 +148,20 @@ function Jade () {
             }
           }
 
+          if (!skipCache){
+            var lastModified = new Date(fs.statSync(tplPath).mtime)
+            var ifModifiedSince = new Date(this.request.header['if-modified-since'])
+            var notModified = Math.floor(+ifModifiedSince/1000/60) >= Math.floor(+lastModified/1000/60)
+
+            if (notModified){
+              this.status = 304
+              return
+            }
+            else this.set({
+              'Last-Modified': lastModified
+            })
+          }
+
           this.body = compiler(_.merge({}, defaultLocals, locals))
           this.type = 'text/html'
           return this
