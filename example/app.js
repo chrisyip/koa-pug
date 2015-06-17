@@ -15,8 +15,7 @@ app.use(jade.middleware({
   locals: {
     page_title: 'Koa-jade example',
     author: 'Chris Yip',
-    github: '//github.com/chrisyip',
-    repo: 'http://github.com/chrisyip/koa-jade'
+    github: '//github.com/chrisyip'
   }
 }))
 
@@ -25,6 +24,11 @@ app.use(function* (next) {
   var start = Date.now()
   yield next
   console.info('<--', this.method, this.url, this.res.statusCode, (Date.now() - start) + 'ms')
+})
+
+app.use(function* (next) {
+  this.state.repo = 'http://github.com/chrisyip/koa-jade'
+  yield next
 })
 
 app.use(router())
