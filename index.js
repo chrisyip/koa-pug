@@ -148,7 +148,7 @@ function Jade () {
             }
           }
 
-          this.body = compiler(_.merge({}, defaultLocals, locals, this.state))
+          this.body = compiler(_.merge({}, defaultLocals, this.state, locals))
           this.type = 'text/html'
           return this
         }
