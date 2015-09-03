@@ -11,12 +11,12 @@ rootPath = process.cwd()
 
 // http://stackoverflow.com/a/10425344
 function toCamelCase (input) {
-  return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
+  return input.toLowerCase().replace(/-(.)/g, function (match, group1) {
     return group1.toUpperCase()
   })
 }
 
-function endsWith(str, substr) {
+function endsWith (str, substr) {
   if (substr.length > str.length) {
     return false
   }
@@ -46,7 +46,7 @@ function loadHelpers (dirs) {
       } else if (_.isString(item)) {
         load(item)
       }
-    });
+    })
   } else {
     load(dirs)
   }
@@ -90,14 +90,14 @@ function Jade () {
   this.version = pkg.version
 
   Object.defineProperties(this, {
-    'version': {
+    version: {
       enumerable: true,
       get: function () {
         return pkg.version
       }
     },
 
-    'renderer': {
+    renderer: {
       enumerable: true,
       value: function () {
         /**
@@ -155,7 +155,7 @@ function Jade () {
       }
     },
 
-    'configure': {
+    configure: {
       enumerable: true,
       value: function (options) {
         if (!_.isPlainObject(options)) {
@@ -193,7 +193,7 @@ function Jade () {
       }
     },
 
-    'middleware': {
+    middleware: {
       enumerable: true,
       value: function (options) {
         this.configure(options)
