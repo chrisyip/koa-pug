@@ -1,6 +1,6 @@
 # Koa-jade
 
-[![Node version][node-image]][npm-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Travis CI][travis-image]][travis-url]
+[![Node version][node-image]][npm-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Travis CI][travis-image]][travis-url] [![Codecov][codecov-image]][codecov-url]
 
 A [Jade](http://jade-lang.com/) middleware for [Koa](http://koajs.com/).
 
@@ -11,12 +11,12 @@ npm install koa-jade --save
 ```
 
 ```js
-var koa = require('koa')
-var jade = require('koa-jade')
-var app = koa()
+const koa = require('koa')
+const app = koa()
 
-app.use(jade.middleware({
-  viewPath: __dirname + '/views',
+const Jade = require('koa-jade')
+const jade = new Jade({
+  viewPath: './views',
   debug: false,
   pretty: false,
   compileDebug: false,
@@ -24,25 +24,60 @@ app.use(jade.middleware({
   basedir: 'path/for/jade/extends',
   helperPath: [
     'path/to/jade/helpers',
-    { random: 'path/to/lib.js' },
+    { random: 'path/to/lib/random.js' },
     { _: require('lodash') }
   ]
-}))
+})
+
+jade.locals.someKey = 'some value'
+
+app.use(jade.middleware)
 
 app.use(function* () {
   this.render('index', locals_for_this_page, true)
 })
-
-app.listen(3000)
 ```
 
-Normal function vs. generator function:
+With `vhost`:
 
-```
-iojs 1.6.4
-Normal function x 163,231 ops/sec ±1.33% (180 runs sampled)
-Generator function x 74,904 ops/sec ±1.86% (173 runs sampled)
-Fastest is Normal function
+```js
+const koa = require('koa')
+const vhost = require('koa-vhost')
+const Jade = require('koa-jade')
+const _ = require('lodash')
+
+const server = koa()
+const server1 = koa()
+const server2 = koa()
+
+const jadeConfig = {
+  locals: {
+    title: 'Koa Demo'
+  }
+}
+
+var jade1 = new Jade(_.assign({}, jadeConfig, {
+  viewPath: './views1/'
+}))
+
+var jade2 = new Jade(_.assign({}, jadeConfig, {
+  viewPath: './views2/'
+}))
+
+server1.use(jade1.middleware)
+
+server1.use(function* (next) {
+  this.render('index')
+})
+
+server2.use(jade2.middleware)
+
+server2.use(function* (next) {
+  this.render('index')
+})
+
+server.use(vhost('test1.app.dev', server1))
+server.use(vhost('test2.app.dev', server2))
 ```
 
 ## Options
@@ -61,13 +96,68 @@ Fastest is Normal function
 
 `basedir`: help Jade to identify paths when using `extends` with `absolute` paths.
 
-## Methods
+## Methods and Properties
 
-### middleware(options)
+### middleware
 
-Configure and create a middleware.
+The middleware for configuring Koa's [context](http://koajs.com/#context).
 
-### render(tpl, locals, options, noCache)
+```js
+const Jade = require('koa-jade')
+const jade = new Jade()
+app.use(jade.middleware)
+```
+
+### options
+
+Options for rendering views.
+
+```js
+// Passing options in construction
+const jade = new Jade({
+  debug: process.env.NODE_ENV === 'development',
+  ...
+})
+
+// Change options when needed
+if (NO_CACHE) {
+  jade.options.noCache = false
+}
+
+/**
+ * Reset options to default:
+ * {
+ *   compileDebug: false,
+ *   pretty: false
+ * }
+ */
+jade.options = {}
+```
+
+### locals
+
+An object of locals that will be passed to all views.
+
+```js
+// Setting some locals for different envs
+if (process.env.NODE_ENV === 'development') {
+  jade.locals.debug = DEBUG_DATA
+}
+
+// Mess assignment
+_.assign(jade.locals, LOCALS_1, LOCALS_2, ...)
+
+// You can override it by assigning an object ot it
+jade.locals = {
+  key: value,
+  foo: 'bar'
+}
+
+// Remove all locals
+jade.locals = {}
+```
+
+### ctx.render(tpl, locals, options, noCache)
 
 Render template, and set rendered template to `this.body`.
 
@@ -88,10 +178,10 @@ If `options` is set to `true` or `false`, it will be treated as `noCache`, and `
 If you encounter this error, `Error: the "basedir" option is required to use "extends" with "absolute" paths`, try to set `basedir` like this:
 
 ```js
-app.use(jade.middleware({
+const jade = new Jade({
   viewPath: 'path/to/views',
   basedir: 'path/for/jade/extends'
-}))
+})
 ```
 
 or
@@ -104,7 +194,7 @@ app.use(function* () {
 
 ## Content-Type
 
-Koa-jade sets `content-type` to `text/html` automatically. if wanna change it, do like this:
+Koa-jade sets `content-type` to `text/html` automatically. if you wanna change it, do like this:
 
 ```js
 this.render('index')
@@ -122,11 +212,7 @@ By setting `helperPath`, koa-jade will load all the modules that under sepecifie
 ```js
 // format-date.js
 module.exports = function (input) {
-    if (input instanceof Date) {
-      return (input.getMonth() + 1) + '/' + input.getDate() + '/' + input.getFullYear()
-    }
-
-    return input
+  return (input.getMonth() + 1) + '/' + input.getDate() + '/' + input.getFullYear()
 }
 ```
 
@@ -137,11 +223,7 @@ It equals to:
 module.exports = {
   moduleName: 'formatDate',
   moduleBody: function (input) {
-    if (input instanceof Date) {
-      return (input.getMonth() + 1) + '/' + input.getDate() + '/' + input.getFullYear()
-    }
-
-    return input
+    return (input.getMonth() + 1) + '/' + input.getDate() + '/' + input.getFullYear()
   }
 }
 ```
@@ -172,11 +254,6 @@ For `this.render('bar')`, because `bar.jade` doesn't exist and `bar` is a direct
 
 For `this.render('baz')`, because `baz` is a file, and not end with `.jade`, `koa-jade` will throw an `ENOENT` error.
 
-# Todo
-
-- cache for generated HTML file
-- tests
-
 # Contributors
 
 Via [GitHub](https://github.com/chrisyip/koa-jade/graphs/contributors)
@@ -188,3 +265,5 @@ Via [GitHub](https://github.com/chrisyip/koa-jade/graphs/contributors)
 [daviddm-image]: http://img.shields.io/david/chrisyip/koa-jade.svg?style=flat-square
 [travis-url]: https://travis-ci.org/chrisyip/koa-jade
 [travis-image]: http://img.shields.io/travis/chrisyip/koa-jade.svg?style=flat-square
+[codecov-url]: https://codecov.io/github/chrisyip/koa-jade
+[codecov-image]: https://img.shields.io/codecov/c/github/chrisyip/koa-jade.svg?style=flat-square

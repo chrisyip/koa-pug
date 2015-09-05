@@ -37,6 +37,7 @@
     "no-debugger": 1,
     "no-floating-decimal": 2,
     "no-loop-func": 1,
+    "no-unused-vars": [2, { "vars": "all", "args": "after-used" }],
     "space-before-blocks": [2, "always"],
     "no-trailing-spaces": 2,
     "space-before-function-paren": [2, "always"],
@@ -54,8 +55,8 @@
     "no-shadow": 0,
     "new-parens": 0
   },
-  "parser": "babel-eslint",
   "env": {
-    "node": true
+    "node": true,
+    "es6": true
   }
 }

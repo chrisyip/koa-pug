@@ -1,32 +1,9 @@
-/* jshint noyield: true */
-
-var pkg, fs, path, jade, _, rootPath
-
-pkg = require('./package.json')
-fs = require('fs-extra')
-path = require('path')
-jade = require('jade')
-_ = require('lodash')
-rootPath = process.cwd()
-
-// http://stackoverflow.com/a/10425344
-function toCamelCase (input) {
-  return input.toLowerCase().replace(/-(.)/g, function (match, group1) {
-    return group1.toUpperCase()
-  })
-}
-
-function endsWith (str, substr) {
-  if (substr.length > str.length) {
-    return false
-  }
-
-  if (substr === str) {
-    return true
-  }
-
-  return str.lastIndexOf(substr) === str.length - substr.length
-}
+var pkg = require('./package.json')
+var fs = require('fs-extra')
+var path = require('path')
+var jade = require('jade')
+var _ = require('lodash')
+var rootPath = process.cwd()
 
 function loadHelpers (dirs) {
   var helpers = {}
@@ -52,10 +29,8 @@ function loadHelpers (dirs) {
   }
 
   function load (dir, moduleName) {
-    var fullPath, stat, module
-
-    fullPath = path.resolve(dir)
-    stat = fs.statSync(fullPath)
+    var fullPath = path.resolve(dir)
+    var stat = fs.statSync(fullPath)
 
     if (stat.isDirectory()) {
       _.forEach(fs.readdirSync(dir), function (file) {
@@ -69,7 +44,7 @@ function loadHelpers (dirs) {
       } else if (_.isString(module.moduleName)) {
         helpers[module.moduleName] = module.moduleBody
       } else {
-        helpers[toCamelCase(path.basename(fullPath, path.extname(fullPath)))] = module
+        helpers[_.camelCase(path.basename(fullPath, path.extname(fullPath)))] = module
       }
     }
   }
@@ -77,89 +52,99 @@ function loadHelpers (dirs) {
   return helpers
 }
 
-function Jade () {
+function Jade (options) {
   var defaultOptions = {
-        compileDebug: false,
-        pretty: false
-      }
-    , globalNoCache = false
-    , compilers = new Map()
-    , defaultLocals = {}
-    , viewPath
+    compileDebug: false,
+    pretty: false
+  }
+  var globalNoCache = false
+  var compilers = new Map()
+  var defaultLocals = {}
+  var viewPath
 
-  this.version = pkg.version
+  /**
+   * @param {String}  tpl     the template path, search start from viewPath
+   * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
+   * @param {Object}  options options that pass to Jade compiler, merged with global default options
+   * @param {Boolean} noCache use cache or not
+   */
+  function renderer (tpl, locals, options, noCache) {
+    var compileOptions, tplPath, rawJade, compiler, skipCache
 
-  Object.defineProperties(this, {
-    version: {
-      enumerable: true,
-      get: function () {
-        return pkg.version
-      }
-    },
+    if (_.endsWith(tpl, '.jade')) {
+      tplPath = path.resolve(viewPath, tpl)
+    } else {
+      // If view path doesn't end with `.jade`, add `.jade` and check if it exists
+      var dirname = path.resolve(viewPath, tpl)
+      tplPath = dirname + '.jade'
 
-    renderer: {
-      enumerable: true,
-      value: function () {
-        /**
-         * @param {String}  tpl     the template path, search start from viewPath
-         * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
-         * @param {Object}  options options that pass to Jade compiler, merged with global default options
-         * @param {Boolean} noCache use cache or not
-         */
-        return function (tpl, locals, options, noCache) {
-          var compileOptions, tplPath, rawJade, compiler, skipCache
-
-          if (endsWith(tpl, '.jade')) {
-            tplPath = path.resolve(viewPath, tpl)
-          } else {
-            // If view path doesn't end with `.jade`, add `.jade` and check if it exists
-            var dirname = path.resolve(viewPath, tpl)
-            tplPath = dirname + '.jade'
-
-            // If doesn't exist and the dirname is a folder, then search `index.jade` file
-            if (!fs.existsSync(tplPath)) {
-              var stat = fs.statSync(dirname)
-              if (stat.isDirectory()) {
-                tplPath = path.resolve(dirname, 'index.jade')
-              }
-            }
-          }
-
-          rawJade = fs.readFileSync(tplPath)
-
-          compileOptions = _.merge({}, defaultOptions)
-
-          if (_.isPlainObject(options)) {
-            _.merge(compileOptions, options)
-          }
-
-          compileOptions.filename = tplPath
-
-          skipCache = _.isBoolean(options) ? options : _.isBoolean(noCache) ? noCache : globalNoCache
-
-          if (skipCache) {
-            compiler = jade.compile(rawJade, compileOptions)
-          } else {
-            compiler = compilers.get(tplPath)
-
-            if (!compiler) {
-              compiler = jade.compile(rawJade, compileOptions)
-              compilers.set(tplPath, compiler)
-            }
-          }
-
-          this.body = compiler(_.merge({}, defaultLocals, this.state, locals))
-          this.type = 'text/html'
-          return this
+      // If doesn't exist and the dirname is a folder, then search `index.jade` file
+      if (!fs.existsSync(tplPath)) {
+        var stat = fs.statSync(dirname)
+        if (stat.isDirectory()) {
+          tplPath = path.resolve(dirname, 'index.jade')
         }
       }
+    }
+
+    rawJade = fs.readFileSync(tplPath)
+
+    compileOptions = _.merge({}, defaultOptions)
+
+    if (_.isPlainObject(options)) {
+      _.merge(compileOptions, options)
+    }
+
+    compileOptions.filename = tplPath
+
+    if (_.isBoolean(options)) {
+      skipCache = options
+    } else {
+      skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
+    }
+
+    if (skipCache) {
+      compiler = jade.compile(rawJade, compileOptions)
+    } else {
+      compiler = compilers.get(tplPath)
+
+      if (!compiler) {
+        compiler = jade.compile(rawJade, compileOptions)
+        compilers.set(tplPath, compiler)
+      }
+    }
+
+    this.body = compiler(_.merge({}, defaultLocals, this.state, locals))
+    this.type = 'text/html'
+    return this
+  }
+
+  Object.defineProperties(this, {
+    middleware: {
+      enumerable: true,
+      value: function* (next) {
+        this.render = renderer
+        yield next
+      }
     },
 
-    configure: {
+    /* Configuration */
+    options: {
       enumerable: true,
-      value: function (options) {
+      get: function () {
+        return defaultOptions
+      },
+      set: function (options) {
         if (!_.isPlainObject(options)) {
-          options = {}
+          return
+        }
+
+        if (_.isEmpty(options)) {
+          defaultOptions = {
+            compileDebug: false,
+            pretty: false
+          }
+          return
         }
 
         viewPath = _.isString(options.viewPath) ? options.viewPath : rootPath
@@ -193,20 +178,33 @@ function Jade () {
       }
     },
 
-    middleware: {
+    locals: {
       enumerable: true,
-      value: function (options) {
-        this.configure(options)
+      get: function () {
+        return defaultLocals
+      },
 
-        var renderer = this.renderer()
-
-        return function* (next) {
-          this.render = renderer
-          yield next
+      set: function (val) {
+        if (!_.isPlainObject(val)) {
+          return
         }
+
+        defaultLocals = {}
       }
     }
   })
+
+  this.options = _.assign({
+    compileDebug: false,
+    pretty: false
+  }, options)
 }
 
-module.exports = new Jade()
+Object.defineProperties(Jade, {
+  version: {
+    enumerable: true,
+    value: pkg.version
+  }
+})
+
+module.exports = Jade
