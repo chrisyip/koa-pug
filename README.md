@@ -144,7 +144,7 @@ if (process.env.NODE_ENV === 'development') {
   jade.locals.debug = DEBUG_DATA
 }
 
-// Mess assignment
+// Mass assignment
 _.assign(jade.locals, LOCALS_1, LOCALS_2, ...)
 
 // You can override it by assigning an object ot it
