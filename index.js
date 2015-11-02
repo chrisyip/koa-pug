@@ -165,7 +165,7 @@ function Jade (options) {
           defaultOptions.pretty = options.debug
           defaultOptions.compileDebug = options.debug
         } else {
-          _.forIn(defaultOptions, function (key) {
+          _.forIn(defaultOptions, function (value, key) {
             if (key in options && _.isBoolean(options[key])) {
               defaultOptions[key] = options[key]
             }
