@@ -1,9 +1,12 @@
+/* eslint-env mocha */
+
 var app = require('../example/app')
 var request = require('supertest-koa-agent')
 var $ = require('cheerio')
 var Promise = require('bluebird')
 var Jade = require('..')
 require('chai').Should()
+var expect = require('chai').expect
 
 describe('koa-jade', function () {
   it('should render Jade file', function (done) {
@@ -97,6 +100,18 @@ describe('koa-jade', function () {
         jade.locals.should.be.an.Object
         jade.locals = true
         jade.locals.should.be.an.Object
+      })
+
+      it('should override original value', function () {
+        var jade = new Jade({ locals: { foo: 'bar' } })
+        jade.locals = { baz: 'baz' }
+
+        expect(jade.locals.foo).to.not.exist
+        expect(jade.locals.baz).to.eql('baz')
+
+        jade.locals = null
+        expect(Object.keys(jade.locals).length).to.eql(0)
+        expect(jade.locals.baz).to.not.exist
       })
 
       it('should be manipulatable', function (done) {

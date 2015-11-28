@@ -19,12 +19,6 @@ var jade = new Jade({
 
 jade.locals.github = '//github.com/chrisyip'
 
-app.use(function* (next) {
-  try {
-    yield next
-  } catch (e) {}
-})
-
 app.use(jade.middleware)
 
 app.use(function* (next) {

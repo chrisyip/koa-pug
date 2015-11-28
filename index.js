@@ -37,14 +37,14 @@ function loadHelpers (dirs) {
         load(dir + '/' + file)
       })
     } else if (stat.isFile()) {
-      module = require(fullPath)
+      var mod = require(fullPath)
 
       if (_.isString(moduleName)) {
-        helpers[moduleName] = module
-      } else if (_.isString(module.moduleName)) {
-        helpers[module.moduleName] = module.moduleBody
+        helpers[moduleName] = mod
+      } else if (_.isString(mod.moduleName)) {
+        helpers[mod.moduleName] = mod.moduleBody
       } else {
-        helpers[_.camelCase(path.basename(fullPath, path.extname(fullPath)))] = module
+        helpers[_.camelCase(path.basename(fullPath, path.extname(fullPath)))] = mod
       }
     }
   }
@@ -61,6 +61,7 @@ function Jade (options) {
   var compilers = new Map()
   var defaultLocals = {}
   var viewPath
+  var helpers = {}
 
   /**
    * @param {String}  tpl     the template path, search start from viewPath
@@ -114,7 +115,7 @@ function Jade (options) {
       }
     }
 
-    this.body = compiler(_.merge({}, defaultLocals, this.state, locals))
+    this.body = compiler(_.merge({}, helpers, defaultLocals, this.state, locals))
     this.type = 'text/html'
     return this
   }
@@ -140,10 +141,7 @@ function Jade (options) {
         }
 
         if (_.isEmpty(options)) {
-          defaultOptions = {
-            compileDebug: false,
-            pretty: false
-          }
+          defaultOptions = {}
           return
         }
 
@@ -158,7 +156,7 @@ function Jade (options) {
         }
 
         if (_.isString(options.helperPath) || _.isArray(options.helperPath)) {
-          _.merge(defaultLocals, loadHelpers(options.helperPath))
+          _.merge(helpers, loadHelpers(options.helperPath))
         }
 
         if (_.isBoolean(options.debug)) {
@@ -185,11 +183,11 @@ function Jade (options) {
       },
 
       set: function (val) {
-        if (!_.isPlainObject(val)) {
-          return
+        if (val == null) {
+          defaultLocals = {}
+        } else if (_.isPlainObject(val)) {
+          defaultLocals = val
         }
-
-        defaultLocals = {}
       }
     }
   })
