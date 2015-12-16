@@ -254,6 +254,12 @@ For `this.render('bar')`, because `bar.jade` doesn't exist and `bar` is a direct
 
 For `this.render('baz')`, because `baz` is a file, and not end with `.jade`, `koa-jade` will throw an `ENOENT` error.
 
+# Migration Notes
+
+## 2.x
+
+- `this.render` becomes a normal function, it does not require `yield` statement anymore. ([Issue #14](https://github.com/chrisyip/koa-jade/issues/14#issuecomment-164997785))
+
 # Contributors
 
 Via [GitHub](https://github.com/chrisyip/koa-jade/graphs/contributors)
