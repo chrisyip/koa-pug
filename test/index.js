@@ -80,6 +80,42 @@ describe('koa-jade', function () {
       jade.should.be.an('object')
     })
 
+    describe('render', function () {
+      it('should render Jade template string', function (done) {
+        var app = Koa()
+        new Jade({ app: app })
+
+        app.use(function* (next) {
+          this.state.name = 'Jade'
+          this.render('h1 Hello, #{name}', {}, { fromString: true })
+          yield next
+        })
+
+        request(app).get('/').expect(function (res) {
+          $(res.text).text().should.eql('Hello, Jade')
+        })
+        .expect(200, done)
+      })
+
+      it('should render Jade file', function (done) {
+        var app = Koa()
+        new Jade({ app: app, viewPath: __dirname, basedir: __dirname })
+
+        app.use(function* (next) {
+          this.state.name = 'Jade'
+          this.render('textuals/hello')
+          yield next
+        })
+
+        request(app).get('/').expect(function (res) {
+          var doc = $(res.text)
+          doc.hasClass('content').should.be.true
+          doc.find('h1').text().should.eql('Hello, Jade')
+        })
+        .expect(200, done)
+      })
+    })
+
     describe('options', function () {
       it('should always be an object and only accept object value', function () {
         var jade = new Jade()
@@ -205,27 +241,27 @@ describe('koa-jade', function () {
         .expect(200, done)
       })
     })
-  })
 
-  describe('Helpers', function () {
-    it('should support helper', function (done) {
-      request(app).get('/lodash')
-        .expect(function (res) {
-          res.text.should.eql('fooBar')
-        })
-        .expect(200, done)
-    })
+    describe('Helpers', function () {
+      it('should support helper', function (done) {
+        request(app).get('/lodash')
+          .expect(function (res) {
+            res.text.should.eql('fooBar')
+          })
+          .expect(200, done)
+      })
 
-    it('should support load helpers from a directory', function (done) {
-      var formatDate = require('../example/helpers/format-date')
+      it('should support load helpers from a directory', function (done) {
+        var formatDate = require('../example/helpers/format-date')
 
-      request(app).get('/')
-        .expect(function (res) {
-          var doc = $(res.text)
-          var date = doc.find('.format-date')
-          date.text().trim().should.eql(formatDate.moduleBody(new Date()))
-        })
-        .expect(200, done)
+        request(app).get('/')
+          .expect(function (res) {
+            var doc = $(res.text)
+            var date = doc.find('.format-date')
+            date.text().trim().should.eql(formatDate.moduleBody(new Date()))
+          })
+          .expect(200, done)
+      })
     })
   })
 })

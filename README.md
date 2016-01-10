@@ -97,7 +97,22 @@ server.use(vhost('test2.app.dev', server2))
 
 ## Methods and Properties
 
-### middleware
+### use
+
+```js
+const Jade = require('koa-jade')
+const jade = new Jade()
+// `new Jade({ app })` equals to
+jade.use(app)
+
+app.use(function* () {
+  this.render('h1 Hello, #{name}', { name: 'Jade' }, { fromString: true })
+})
+```
+
+Binding `render` function to `app.context`. See [official doc](https://github.com/koajs/koa/blob/master/docs/api/index.md#appcontext).
+
+### middleware (deprecated)
 
 The middleware for configuring Koa's [context](http://koajs.com/#context).
 
@@ -165,6 +180,8 @@ Render template, and set rendered template to `this.body`.
 `locals`: locals for this page. Optional. If `options` or `noCache` presented, please use `{}`, `undefined` or `null` for empty `locals`.
 
 `options`: override global default options for this page. Only assigning an `object` or a `boolean` to it will take effects.
+
+`options.fromString`: `fromString` only available in `ctx.render`, by assigning a true value, Jade will **not** treat `tpl` as a path: `ctx.render('h1 Hello, #{name}')`. Templates rendered with `fromString: true` will **not** be stored in cache.
 
 `noCache`: use cache or not. Notes: 1. overrides global `noCache`; 2. won't affect other pages.
 

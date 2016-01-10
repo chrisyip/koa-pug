@@ -63,14 +63,8 @@ function Jade (options) {
   var viewPath
   var helpers = {}
 
-  /**
-   * @param {String}  tpl     the template path, search start from viewPath
-   * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
-   * @param {Object}  options options that pass to Jade compiler, merged with global default options
-   * @param {Boolean} noCache use cache or not
-   */
-  function renderer (tpl, locals, options, noCache) {
-    var compileOptions, tplPath, rawJade, compiler, skipCache
+  function compileFile (tpl, locals, compileOptions, skipCache) {
+    var tplPath, rawJade, compiler
 
     if (_.endsWith(tpl, '.jade')) {
       tplPath = path.resolve(viewPath, tpl)
@@ -90,19 +84,7 @@ function Jade (options) {
 
     rawJade = fs.readFileSync(tplPath)
 
-    compileOptions = _.merge({}, defaultOptions)
-
-    if (_.isPlainObject(options)) {
-      _.merge(compileOptions, options)
-    }
-
     compileOptions.filename = tplPath
-
-    if (_.isBoolean(options)) {
-      skipCache = options
-    } else {
-      skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
-    }
 
     if (skipCache) {
       compiler = jade.compile(rawJade, compileOptions)
@@ -115,7 +97,42 @@ function Jade (options) {
       }
     }
 
-    this.body = compiler(_.merge({}, helpers, defaultLocals, this.state, locals))
+    return compiler(locals)
+  }
+
+  function compileString (tpl, locals, compileOptions) {
+    return jade.compile(tpl, compileOptions)(locals)
+  }
+
+  /**
+   * @param {String}  tpl     the template path, search start from viewPath
+   * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
+   * @param {Object}  options options that pass to Jade compiler, merged with global default options
+   * @param {Boolean} noCache use cache or not
+   */
+  function renderer (tpl, locals, options, noCache) {
+    var compileOptions = _.merge({}, defaultOptions)
+
+    if (_.isPlainObject(options)) {
+      _.merge(compileOptions, options)
+    }
+
+    var finalLocals = _.merge({}, helpers, defaultLocals, this.state, locals)
+
+    if (compileOptions.fromString) {
+      this.body = compileString(tpl, finalLocals, compileOptions)
+    } else {
+      var skipCache
+
+      if (_.isBoolean(options)) {
+        skipCache = options
+      } else {
+        skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
+      }
+
+      this.body = compileFile(tpl, finalLocals, compileOptions, skipCache)
+    }
+
     this.type = 'text/html'
     return this
   }
