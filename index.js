@@ -121,6 +121,13 @@ function Jade (options) {
   }
 
   Object.defineProperties(this, {
+    use: {
+      enumerable: true,
+      value: function (app) {
+        app.context.render = renderer
+      }
+    },
+
     middleware: {
       enumerable: true,
       value: function* (next) {
@@ -172,6 +179,10 @@ function Jade (options) {
 
         if (_.isString(options.basedir)) {
           defaultOptions.basedir = options.basedir
+        }
+
+        if (options.app && options.app.constructor.name === 'Application') {
+          this.use(options.app)
         }
       }
     },

@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+var Koa = require('koa')
 var app = require('../example/app')
 var request = require('supertest-koa-agent')
 var $ = require('cheerio')
@@ -140,6 +141,68 @@ describe('koa-jade', function () {
             doc.find('.repo-url').attr('href').should.eql('//github.com/chrisyip')
           })
           .expect(200, done)
+      })
+
+      it('should attach a redner function to Koa context', function (done) {
+        var app = Koa()
+        var jade = new Jade()
+        app.use(jade.middleware)
+
+        app.use(function* (next) {
+          this.state.name = 'Jade'
+          this.render('h1 Hello, #{name}', {}, { fromString: true })
+          yield next
+        })
+
+        request(app).get('/').expect(function (res) {
+          $(res.text).text().should.eql('Hello, Jade')
+        })
+        .expect(200, done)
+      })
+    })
+
+    describe('use', function () {
+      it('should always be a function and immutable', function () {
+        var jade = new Jade()
+        jade.use.should.be.a.Function
+        jade.use = true
+        jade.use.should.be.a.Function
+        jade.use.constructor.name.should.eql('Function')
+      })
+
+      it('should attach a render function to Koa context', function (done) {
+        var app = Koa()
+        var jade = new Jade()
+        jade.use(app)
+
+        app.use(function* (next) {
+          this.state.name = 'Jade'
+          this.render('h1 Hello, #{name}', {}, { fromString: true })
+          yield next
+        })
+
+        request(app).get('/').expect(function (res) {
+          $(res.text).text().should.eql('Hello, Jade')
+        })
+        .expect(200, done)
+      })
+
+      it('can be configured through constructor', function (done) {
+        var app = Koa()
+        new Jade({
+          app: app
+        })
+
+        app.use(function* (next) {
+          this.state.name = 'Jade'
+          this.render('h1 Hello, #{name}', {}, { fromString: true })
+          yield next
+        })
+
+        request(app).get('/').expect(function (res) {
+          $(res.text).text().should.eql('Hello, Jade')
+        })
+        .expect(200, done)
       })
     })
   })

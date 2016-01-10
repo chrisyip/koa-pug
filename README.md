@@ -26,12 +26,11 @@ const jade = new Jade({
     'path/to/jade/helpers',
     { random: 'path/to/lib/random.js' },
     { _: require('lodash') }
-  ]
+  ],
+  app: app // equals to jade.use(app) and app.use(jade.middleware)
 })
 
 jade.locals.someKey = 'some value'
-
-app.use(jade.middleware)
 
 app.use(function* () {
   this.render('index', locals_for_this_page, true)
@@ -64,13 +63,13 @@ var jade2 = new Jade(_.assign({}, jadeConfig, {
   viewPath: './views2/'
 }))
 
-server1.use(jade1.middleware)
+jade1.use(server1)
 
 server1.use(function* (next) {
   this.render('index')
 })
 
-server2.use(jade2.middleware)
+jade2.use(server2)
 
 server2.use(function* (next) {
   this.render('index')

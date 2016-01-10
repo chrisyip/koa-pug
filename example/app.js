@@ -14,12 +14,11 @@ var jade = new Jade({
   locals: {
     page_title: 'Koa-jade example',
     author: 'Chris Yip'
-  }
+  },
+  app: app
 })
 
 jade.locals.github = '//github.com/chrisyip'
-
-app.use(jade.middleware)
 
 app.use(function* (next) {
   this.state.repo = 'http://github.com/chrisyip/koa-jade'
