@@ -34,6 +34,7 @@ jade.locals.someKey = 'some value'
 
 app.use(function* () {
   this.render('index', locals_for_this_page, true)
+  // this.body = this.render_string('index', locals_for_this_page, true)
 })
 ```
 
@@ -188,6 +189,18 @@ Render template, and set rendered template to `this.body`.
 If `options` is set to `true` or `false`, it will be treated as `noCache`, and `noCache` will be ignored. For example, `render(tpl, locals, true)` equals to `render(tpl, locals, {}, true)`, and `render(tpl, locals, true, false)` will skip cache and re-compile template.
 
 `options` and `noCache` are optional.
+
+### ctx.render_string()
+
+different from `ctx.render`, `ctx.render_string` return rendered template string do not set to `this.body`.
+
+```js
+app.use(function* () {
+  this.body = {
+    html: this.render_string('index', locals_for_this_page, true)
+  }
+})
+```
 
 ## basedir
 

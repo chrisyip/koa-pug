@@ -105,13 +105,24 @@ function Jade (options) {
   }
 
   /**
+   * Render template, and set rendered template to `this.body`
+   */
+  function renderer () {
+    this.body = render_string.apply(this, arguments)
+    this.type = 'text/html'
+    return this
+  }
+
+  /**
+   * Render template to string
    * @param {String}  tpl     the template path, search start from viewPath
    * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
    * @param {Object}  options options that pass to Jade compiler, merged with global default options
    * @param {Boolean} noCache use cache or not
    */
-  function renderer (tpl, locals, options, noCache) {
+  function render_string (tpl, locals, options, noCache) {
     var compileOptions = _.merge({}, defaultOptions)
+    var skipCache
 
     if (_.isPlainObject(options)) {
       _.merge(compileOptions, options)
@@ -120,21 +131,16 @@ function Jade (options) {
     var finalLocals = _.merge({}, helpers, defaultLocals, this.state, locals)
 
     if (compileOptions.fromString) {
-      this.body = compileString(tpl, finalLocals, compileOptions)
-    } else {
-      var skipCache
-
-      if (_.isBoolean(options)) {
-        skipCache = options
-      } else {
-        skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
-      }
-
-      this.body = compileFile(tpl, finalLocals, compileOptions, skipCache)
+      return compileString(tpl, finalLocals, compileOptions)
     }
 
-    this.type = 'text/html'
-    return this
+    if (_.isBoolean(options)) {
+      skipCache = options
+    } else {
+      skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
+    }
+
+    return compileFile(tpl, finalLocals, compileOptions, skipCache)
   }
 
   Object.defineProperties(this, {
@@ -142,6 +148,7 @@ function Jade (options) {
       enumerable: true,
       value: function (app) {
         app.context.render = renderer
+        app.context.render_string = render_string
       }
     },
 
@@ -149,6 +156,7 @@ function Jade (options) {
       enumerable: true,
       value: function* (next) {
         this.render = renderer
+        this.render_string = render_string
         yield next
       }
     },
