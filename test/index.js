@@ -116,14 +116,14 @@ describe('koa-jade', function () {
       })
     })
 
-    describe('render_string', function () {
+    describe('renderString', function () {
       it('should render Jade template string', function (done) {
         var app = Koa()
         new Jade({ app: app })
 
         app.use(function* (next) {
           this.state.name = 'Jade'
-          this.body = this.render_string('h1 Hello, #{name}', {}, { fromString: true })
+          this.body = this.renderString('h1 Hello, #{name}', {}, { fromString: true })
           yield next
         })
 
@@ -139,7 +139,7 @@ describe('koa-jade', function () {
 
         app.use(function* (next) {
           this.state.name = 'Jade'
-          this.body = this.render_string('textuals/hello')
+          this.body = this.renderString('textuals/hello')
           yield next
         })
 

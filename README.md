@@ -34,7 +34,7 @@ jade.locals.someKey = 'some value'
 
 app.use(function* () {
   this.render('index', locals_for_this_page, true)
-  // this.body = this.render_string('index', locals_for_this_page, true)
+  // this.body = this.renderString('index', locals_for_this_page, true)
 })
 ```
 
@@ -190,14 +190,14 @@ If `options` is set to `true` or `false`, it will be treated as `noCache`, and `
 
 `options` and `noCache` are optional.
 
-### ctx.render_string()
+### ctx.renderString()
 
-different from `ctx.render`, `ctx.render_string` return rendered template string do not set to `this.body`.
+different from `ctx.render`, `ctx.renderString` return rendered template string do not set to `this.body`.
 
 ```js
 app.use(function* () {
   this.body = {
-    html: this.render_string('index', locals_for_this_page, true)
+    html: this.renderString('index', locals_for_this_page, true)
   }
 })
 ```

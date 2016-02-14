@@ -108,7 +108,7 @@ function Jade (options) {
    * Render template, and set rendered template to `this.body`
    */
   function renderer () {
-    this.body = render_string.apply(this, arguments)
+    this.body = renderString.apply(this, arguments)
     this.type = 'text/html'
     return this
   }
@@ -120,7 +120,7 @@ function Jade (options) {
    * @param {Object}  options options that pass to Jade compiler, merged with global default options
    * @param {Boolean} noCache use cache or not
    */
-  function render_string (tpl, locals, options, noCache) {
+  function renderString (tpl, locals, options, noCache) {
     var compileOptions = _.merge({}, defaultOptions)
     var skipCache
 
@@ -148,7 +148,7 @@ function Jade (options) {
       enumerable: true,
       value: function (app) {
         app.context.render = renderer
-        app.context.render_string = render_string
+        app.context.renderString = renderString
       }
     },
 
@@ -156,7 +156,7 @@ function Jade (options) {
       enumerable: true,
       value: function* (next) {
         this.render = renderer
-        this.render_string = render_string
+        this.renderString = renderString
         yield next
       }
     },
