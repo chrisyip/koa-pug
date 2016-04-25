@@ -1,6 +1,6 @@
 {
   "name": "koa-pug",
-  "version": "2.1.0",
+  "version": "3.0.0-0",
   "description": "A Pug middleware for Koa",
   "main": "index.js",
   "repository": {
