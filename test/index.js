@@ -5,18 +5,18 @@ var app = require('../example/app')
 var request = require('supertest-koa-agent')
 var $ = require('cheerio')
 var Promise = require('bluebird')
-var Jade = require('..')
+var Pug = require('..')
 require('chai').Should()
 var expect = require('chai').expect
 
-describe('koa-jade', function () {
-  it('should render Jade file', function (done) {
+describe('koa-pug', function () {
+  it('should render Pug file', function (done) {
     request(app).get('/')
       .expect(function (res) {
         var doc = $(res.text)
         var title = doc.find('h1')
         title.length.should.eql(1)
-        title.text().should.eql('Koa-jade: a Jade middleware for Koa')
+        title.text().should.eql('Koa-pug: a Pug middleware for Koa')
       })
       .expect(200, done)
   })
@@ -27,37 +27,37 @@ describe('koa-jade', function () {
         var doc = $(res.text)
         var codes = doc.find('code.language-js')
         codes.length.should.eql(2)
-        codes.eq(1).text().should.includes('jade.middleware')
+        codes.eq(1).text().should.includes('pug.middleware')
       })
       .expect(200, done)
   })
 
-  it('should not render file without `.jade` ext name', function (done) {
-    request(app).get('/not-jade').expect(404, done)
+  it('should not render file without `.pug` ext name', function (done) {
+    request(app).get('/not-pug').expect(404, done)
   })
 
-  it('should auto add `.jade` ext name', function (done) {
+  it('should auto add `.pug` ext name', function (done) {
     request(app).get('/foo')
       .expect(function (res) {
-        res.text.should.eql('foo.jade')
+        res.text.should.eql('foo.pug')
       })
       .expect(200, done)
   })
 
-  it('should auto search `index.jade` when passing a directory', function (done) {
+  it('should auto search `index.pug` when passing a directory', function (done) {
     request(app).get('/home')
       .expect(function (res) {
-        res.text.should.eql('home/index.jade')
+        res.text.should.eql('home/index.pug')
       })
       .expect(200, done)
   })
 
-  it('should try to load file first before searching `index.jade`', function (done) {
+  it('should try to load file first before searching `index.pug`', function (done) {
     Promise.all([
       new Promise(function (resolve) {
         request(app).get('/foo')
           .expect(function (res) {
-            res.text.should.eql('foo.jade')
+            res.text.should.eql('foo.pug')
           })
           .expect(200, resolve)
       }),
@@ -65,7 +65,7 @@ describe('koa-jade', function () {
       new Promise(function (resolve) {
         request(app).get('/foo/index')
           .expect(function (res) {
-            res.text.should.eql('foo/index.jade')
+            res.text.should.eql('foo/index.pug')
           })
           .expect(200, resolve)
       })
@@ -74,35 +74,35 @@ describe('koa-jade', function () {
     })
   })
 
-  describe('Jade instance', function () {
+  describe('Pug instance', function () {
     it('should be an object', function () {
-      var jade = new Jade()
-      jade.should.be.an('object')
+      var pug = new Pug()
+      pug.should.be.an('object')
     })
 
     describe('render', function () {
-      it('should render Jade template string', function (done) {
+      it('should render Pug template string', function (done) {
         var app = Koa()
-        new Jade({ app: app })
+        new Pug({ app: app })
 
         app.use(function* (next) {
-          this.state.name = 'Jade'
+          this.state.name = 'Pug'
           this.render('h1 Hello, #{name}', {}, { fromString: true })
           yield next
         })
 
         request(app).get('/').expect(function (res) {
-          $(res.text).text().should.eql('Hello, Jade')
+          $(res.text).text().should.eql('Hello, Pug')
         })
         .expect(200, done)
       })
 
-      it('should render Jade file', function (done) {
+      it('should render Pug file', function (done) {
         var app = Koa()
-        new Jade({ app: app, viewPath: __dirname, basedir: __dirname })
+        new Pug({ app: app, viewPath: __dirname, basedir: __dirname })
 
         app.use(function* (next) {
-          this.state.name = 'Jade'
+          this.state.name = 'Pug'
           this.render('textuals/hello')
           yield next
         })
@@ -110,7 +110,7 @@ describe('koa-jade', function () {
         request(app).get('/').expect(function (res) {
           var doc = $(res.text)
           doc.hasClass('content').should.be.true
-          doc.find('h1').text().should.eql('Hello, Jade')
+          doc.find('h1').text().should.eql('Hello, Pug')
         })
         .expect(200, done)
       })
@@ -118,37 +118,37 @@ describe('koa-jade', function () {
 
     describe('options', function () {
       it('should always be an object and only accept object value', function () {
-        var jade = new Jade()
-        jade.options.should.be.an.Object
-        jade.options = true
-        jade.options.should.be.an.Object
+        var pug = new Pug()
+        pug.options.should.be.an.Object
+        pug.options = true
+        pug.options.should.be.an.Object
       })
 
       it('should have `pretty: false` and `compileDebug: false` by default', function () {
-        var jade = new Jade()
-        jade.options.pretty.should.eql(false)
-        jade.options.compileDebug.should.eql(false)
+        var pug = new Pug()
+        pug.options.pretty.should.eql(false)
+        pug.options.compileDebug.should.eql(false)
       })
     })
 
     describe('locals', function () {
       it('should always be an object and only accpet object value', function () {
-        var jade = new Jade()
-        jade.locals.should.be.an.Object
-        jade.locals = true
-        jade.locals.should.be.an.Object
+        var pug = new Pug()
+        pug.locals.should.be.an.Object
+        pug.locals = true
+        pug.locals.should.be.an.Object
       })
 
       it('should override original value', function () {
-        var jade = new Jade({ locals: { foo: 'bar' } })
-        jade.locals = { baz: 'baz' }
+        var pug = new Pug({ locals: { foo: 'bar' } })
+        pug.locals = { baz: 'baz' }
 
-        expect(jade.locals.foo).to.not.exist
-        expect(jade.locals.baz).to.eql('baz')
+        expect(pug.locals.foo).to.not.exist
+        expect(pug.locals.baz).to.eql('baz')
 
-        jade.locals = null
-        expect(Object.keys(jade.locals).length).to.eql(0)
-        expect(jade.locals.baz).to.not.exist
+        pug.locals = null
+        expect(Object.keys(pug.locals).length).to.eql(0)
+        expect(pug.locals.baz).to.not.exist
       })
 
       it('should be manipulatable', function (done) {
@@ -163,11 +163,11 @@ describe('koa-jade', function () {
 
     describe('middleware', function () {
       it('should always be a generator function and immutable', function () {
-        var jade = new Jade()
-        jade.middleware.should.be.a.Function
-        jade.middleware = true
-        jade.middleware.should.be.a.Function
-        jade.middleware.constructor.name.should.eql('GeneratorFunction')
+        var pug = new Pug()
+        pug.middleware.should.be.a.Function
+        pug.middleware = true
+        pug.middleware.should.be.a.Function
+        pug.middleware.constructor.name.should.eql('GeneratorFunction')
       })
 
       it('should be manipulatable', function (done) {
@@ -181,17 +181,17 @@ describe('koa-jade', function () {
 
       it('should attach a redner function to Koa context', function (done) {
         var app = Koa()
-        var jade = new Jade()
-        app.use(jade.middleware)
+        var pug = new Pug()
+        app.use(pug.middleware)
 
         app.use(function* (next) {
-          this.state.name = 'Jade'
+          this.state.name = 'Pug'
           this.render('h1 Hello, #{name}', {}, { fromString: true })
           yield next
         })
 
         request(app).get('/').expect(function (res) {
-          $(res.text).text().should.eql('Hello, Jade')
+          $(res.text).text().should.eql('Hello, Pug')
         })
         .expect(200, done)
       })
@@ -199,44 +199,44 @@ describe('koa-jade', function () {
 
     describe('use', function () {
       it('should always be a function and immutable', function () {
-        var jade = new Jade()
-        jade.use.should.be.a.Function
-        jade.use = true
-        jade.use.should.be.a.Function
-        jade.use.constructor.name.should.eql('Function')
+        var pug = new Pug()
+        pug.use.should.be.a.Function
+        pug.use = true
+        pug.use.should.be.a.Function
+        pug.use.constructor.name.should.eql('Function')
       })
 
       it('should attach a render function to Koa context', function (done) {
         var app = Koa()
-        var jade = new Jade()
-        jade.use(app)
+        var pug = new Pug()
+        pug.use(app)
 
         app.use(function* (next) {
-          this.state.name = 'Jade'
+          this.state.name = 'Pug'
           this.render('h1 Hello, #{name}', {}, { fromString: true })
           yield next
         })
 
         request(app).get('/').expect(function (res) {
-          $(res.text).text().should.eql('Hello, Jade')
+          $(res.text).text().should.eql('Hello, Pug')
         })
         .expect(200, done)
       })
 
       it('can be configured through constructor', function (done) {
         var app = Koa()
-        new Jade({
+        new Pug({
           app: app
         })
 
         app.use(function* (next) {
-          this.state.name = 'Jade'
+          this.state.name = 'Pug'
           this.render('h1 Hello, #{name}', {}, { fromString: true })
           yield next
         })
 
         request(app).get('/').expect(function (res) {
-          $(res.text).text().should.eql('Hello, Jade')
+          $(res.text).text().should.eql('Hello, Pug')
         })
         .expect(200, done)
       })

@@ -1,16 +1,16 @@
 {
-  "name": "koa-jade",
+  "name": "koa-pug",
   "version": "2.1.0",
-  "description": "A Jade middleware for Koa",
+  "description": "A Pug middleware for Koa",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chrisyip/koa-jade.git"
+    "url": "https://github.com/chrisyip/koa-pug.git"
   },
   "bugs": {
-    "url": "https://github.com/chrisyip/koa-jade/issues"
+    "url": "https://github.com/chrisyip/koa-pug/issues"
   },
-  "homepage": "https://github.com/chrisyip/koa-jade",
+  "homepage": "https://github.com/chrisyip/koa-pug",
   "scripts": {
     "lint": "./node_modules/.bin/eslint .",
     "mocha": "node --harmony node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha --bail --check-leaks test/",
@@ -19,7 +19,8 @@
   "keywords": [
     "koa",
     "jade",
-    "template"
+    "template",
+    "pug"
   ],
   "author": {
     "name": "Chris Yip",
@@ -28,8 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "fs-extra": "^0.24.0",
-    "jade": "^1.11.0",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "pug": "^2.0.0-alpha6"
   },
   "devDependencies": {
     "bluebird": "^2.9.34",

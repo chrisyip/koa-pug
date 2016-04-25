@@ -1,7 +1,9 @@
+'use strict'
+
 var pkg = require('./package.json')
 var fs = require('fs-extra')
 var path = require('path')
-var jade = require('jade')
+var pug = require('pug')
 var _ = require('lodash')
 var rootPath = process.cwd()
 
@@ -52,7 +54,7 @@ function loadHelpers (dirs) {
   return helpers
 }
 
-function Jade (options) {
+function Pug (options) {
   var defaultOptions = {
     compileDebug: false,
     pretty: false
@@ -64,35 +66,35 @@ function Jade (options) {
   var helpers = {}
 
   function compileFile (tpl, locals, compileOptions, skipCache) {
-    var tplPath, rawJade, compiler
+    var tplPath, rawPug, compiler
 
-    if (_.endsWith(tpl, '.jade')) {
+    if (_.endsWith(tpl, '.pug')) {
       tplPath = path.resolve(viewPath, tpl)
     } else {
-      // If view path doesn't end with `.jade`, add `.jade` and check if it exists
+      // If view path doesn't end with `.pug`, add `.pug` and check if it exists
       var dirname = path.resolve(viewPath, tpl)
-      tplPath = dirname + '.jade'
+      tplPath = dirname + '.pug'
 
-      // If doesn't exist and the dirname is a folder, then search `index.jade` file
+      // If doesn't exist and the dirname is a folder, then search `index.pug` file
       if (!fs.existsSync(tplPath)) {
         var stat = fs.statSync(dirname)
         if (stat.isDirectory()) {
-          tplPath = path.resolve(dirname, 'index.jade')
+          tplPath = path.resolve(dirname, 'index.pug')
         }
       }
     }
 
-    rawJade = fs.readFileSync(tplPath)
+    rawPug = fs.readFileSync(tplPath)
 
     compileOptions.filename = tplPath
 
     if (skipCache) {
-      compiler = jade.compile(rawJade, compileOptions)
+      compiler = pug.compile(rawPug, compileOptions)
     } else {
       compiler = compilers.get(tplPath)
 
       if (!compiler) {
-        compiler = jade.compile(rawJade, compileOptions)
+        compiler = pug.compile(rawPug, compileOptions)
         compilers.set(tplPath, compiler)
       }
     }
@@ -101,13 +103,13 @@ function Jade (options) {
   }
 
   function compileString (tpl, locals, compileOptions) {
-    return jade.compile(tpl, compileOptions)(locals)
+    return pug.compile(tpl, compileOptions)(locals)
   }
 
   /**
    * @param {String}  tpl     the template path, search start from viewPath
-   * @param {Object}  locals  locals that pass to Jade compiler, merged with global locals
-   * @param {Object}  options options that pass to Jade compiler, merged with global default options
+   * @param {Object}  locals  locals that pass to Pug compiler, merged with global locals
+   * @param {Object}  options options that pass to Pug compiler, merged with global default options
    * @param {Boolean} noCache use cache or not
    */
   function renderer (tpl, locals, options, noCache) {
@@ -226,11 +228,11 @@ function Jade (options) {
   }, options)
 }
 
-Object.defineProperties(Jade, {
+Object.defineProperties(Pug, {
   version: {
     enumerable: true,
     value: pkg.version
   }
 })
 
-module.exports = Jade
+module.exports = Pug

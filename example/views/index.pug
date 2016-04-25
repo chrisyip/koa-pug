@@ -10,15 +10,15 @@ block content
     ## How to use
 
     ```js
-    npm install koa-jade --save
+    npm install koa-pug --save
     ```
 
     ```js
     var koa = require('koa')
-      , jade = require('koa-jade')
+      , pug = require('koa-pug')
       , app = koa()
 
-    app.use(jade.middleware({
+    app.use(pug.middleware({
       viewPath: __dirname + '/views',
       debug: false,
       pretty: false,
