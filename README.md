@@ -79,6 +79,18 @@ server.use(vhost('test1.app.dev', server1))
 server.use(vhost('test2.app.dev', server2))
 ```
 
+### `koa@2`
+
+- Use `pug.use(app)` or `new Pug({ app })`, DON'T use `app.use(pug.middleware)`
+- Use `ctx.render()` instead of `this.render()`
+
+```js
+new Pug({ app: app })
+// or
+pug.use(app)
+
+```
+
 ## Options
 
 `viewPath`: where Pug templates be stored. Default is `process.cwd()`.

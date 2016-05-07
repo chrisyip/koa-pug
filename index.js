@@ -5,6 +5,7 @@ var fs = require('fs-extra')
 var path = require('path')
 var pug = require('pug')
 var _ = require('lodash')
+var util = require('util')
 var rootPath = process.cwd()
 
 function loadHelpers (dirs) {
@@ -149,10 +150,12 @@ function Pug (options) {
 
     middleware: {
       enumerable: true,
-      value: function* (next) {
-        this.render = renderer
-        yield next
-      }
+      get: util.deprecate(function () {
+        return function* (next) {
+          this.render = renderer
+          yield next
+        }
+      }, 'koa-pug: Pug.middleware is deprecated, use Pug.use instead')
     },
 
     /* Configuration */
