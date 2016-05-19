@@ -55,11 +55,11 @@ const config = {
   }
 }
 
-var pug1 = new pug(_.assign({}, config, {
+var pug1 = new Pug(_.assign({}, config, {
   viewPath: './views1/'
 }))
 
-var pug2 = new pug(_.assign({}, config, {
+var pug2 = new Pug(_.assign({}, config, {
   viewPath: './views2/'
 }))
 
