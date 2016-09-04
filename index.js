@@ -121,9 +121,10 @@ function Pug (options) {
     }
 
     var finalLocals = _.merge({}, helpers, defaultLocals, this.state, locals)
+    var compileResult;
 
     if (compileOptions.fromString) {
-      this.body = compileString(tpl, finalLocals, compileOptions)
+      compileResult = compileString(tpl, finalLocals, compileOptions)
     } else {
       var skipCache
 
@@ -133,9 +134,14 @@ function Pug (options) {
         skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
       }
 
-      this.body = compileFile(tpl, finalLocals, compileOptions, skipCache)
+      compileResult = compileFile(tpl, finalLocals, compileOptions, skipCache)
+    }
+    
+    if(compileOptions.returnString) {
+      return compileResult;
     }
 
+    this.body = compileResult;
     this.type = 'text/html'
     return this
   }
