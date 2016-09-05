@@ -199,6 +199,12 @@ Render template, and set rendered template to `this.body`.
 
 If `options` is set to `true` or `false`, it will be treated as `noCache`, and `noCache` will be ignored. For example, `render(tpl, locals, true)` equals to `render(tpl, locals, {}, true)`, and `render(tpl, locals, true, false)` will skip cache and re-compile template.
 
+If Set the ```options.returnString: true``` can return to the original text.
+eg:
+```javascript
+console.log( this.render('./test.pug'), {} ,{ returnString:true } )
+```
+
 `options` and `noCache` are optional.
 
 ## basedir
