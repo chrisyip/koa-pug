@@ -28,9 +28,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^0.24.0",
     "lodash": "^3.10.1",
-    "pug": "^2.0.0-alpha6"
+    "pug": "^2.0.0-beta6"
   },
   "devDependencies": {
     "bluebird": "^2.9.34",
@@ -48,6 +47,6 @@
     "supertest-koa-agent": "^0.2.1"
   },
   "engines": {
-    "node": ">=0.11.9"
+    "node": ">=0.12.0"
   }
 }
