@@ -9,7 +9,7 @@ var pug = new Pug({
   debug: true,
   helperPath: [
     path.resolve(__dirname, 'helpers'),
-    { _: require('lodash') }
+    { camelCase: require('lodash.camelcase') }
   ],
   locals: {
     page_title: 'Koa-pug example',
