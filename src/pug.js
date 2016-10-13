@@ -4,10 +4,15 @@ var pkg = require('../package.json')
 var fs = require('fs')
 var path = require('path')
 var pug = require('pug')
-var _ = require('lodash')
 var util = require('util')
-var rootPath = process.cwd()
+var endsWith = require('lodash.endswith')
+var assign = require('lodash.assign')
+var merge = require('lodash.merge')
+var isPlainObject = require('lodash.isplainobject')
+var forIn = require('lodash.forin')
 var loadHelpers = require('./load-helpers')
+
+var rootPath = process.cwd()
 
 function Pug (options) {
   var defaultOptions = {
@@ -23,7 +28,7 @@ function Pug (options) {
   function compileFile (tpl, locals, compileOptions, skipCache) {
     var tplPath, compiler
 
-    if (_.endsWith(tpl, '.pug')) {
+    if (endsWith(tpl, '.pug')) {
       tplPath = path.resolve(viewPath, tpl)
     } else {
       // If view path doesn't end with `.pug`, add `.pug` and check if it exists
@@ -66,23 +71,23 @@ function Pug (options) {
    * @param {Boolean} noCache use cache or not
    */
   function renderer (tpl, locals, options, noCache) {
-    var compileOptions = _.merge({}, defaultOptions)
+    var compileOptions = merge({}, defaultOptions)
 
-    if (_.isPlainObject(options)) {
-      _.merge(compileOptions, options)
+    if (isPlainObject(options)) {
+      merge(compileOptions, options)
     }
 
-    var finalLocals = _.merge({}, helpers, defaultLocals, this.state, locals)
+    var finalLocals = merge({}, helpers, defaultLocals, this.state, locals)
 
     if (compileOptions.fromString) {
       this.body = compileString(tpl, finalLocals, compileOptions)
     } else {
       var skipCache
 
-      if (_.isBoolean(options)) {
+      if (typeof options === 'boolean') {
         skipCache = options
       } else {
-        skipCache = _.isBoolean(noCache) ? noCache : globalNoCache
+        skipCache = typeof noCache === 'boolean' ? noCache : globalNoCache
       }
 
       this.body = compileFile(tpl, finalLocals, compileOptions, skipCache)
@@ -117,41 +122,41 @@ function Pug (options) {
         return defaultOptions
       },
       set: function (options) {
-        if (!_.isPlainObject(options)) {
+        if (!isPlainObject(options)) {
           return
         }
 
-        if (_.isEmpty(options)) {
+        if (!Object.keys(options).length) {
           defaultOptions = {}
           return
         }
 
-        viewPath = _.isString(options.viewPath) ? options.viewPath : rootPath
+        viewPath = typeof options.viewPath === 'string' ? options.viewPath : rootPath
 
-        if (_.isPlainObject(options.locals)) {
+        if (isPlainObject(options.locals)) {
           defaultLocals = options.locals
         }
 
-        if (_.isBoolean(options.noCache)) {
+        if (typeof options.noCache === 'boolean') {
           globalNoCache = options.noCache
         }
 
-        if (_.isString(options.helperPath) || _.isArray(options.helperPath)) {
-          _.merge(helpers, loadHelpers(options.helperPath))
+        if (typeof options.helperPath === 'string' || Array.isArray(options.helperPath)) {
+          merge(helpers, loadHelpers(options.helperPath))
         }
 
-        if (_.isBoolean(options.debug)) {
+        if (typeof options.debug === 'boolean') {
           defaultOptions.pretty = options.debug
           defaultOptions.compileDebug = options.debug
         } else {
-          _.forIn(defaultOptions, function (value, key) {
-            if (key in options && _.isBoolean(options[key])) {
+          forIn(defaultOptions, function (value, key) {
+            if (key in options && typeof options[key] === 'boolean') {
               defaultOptions[key] = options[key]
             }
           })
         }
 
-        if (_.isString(options.basedir)) {
+        if (typeof options.basedir === 'string') {
           defaultOptions.basedir = options.basedir
         }
 
@@ -170,14 +175,14 @@ function Pug (options) {
       set: function (val) {
         if (val == null) {
           defaultLocals = {}
-        } else if (_.isPlainObject(val)) {
+        } else if (isPlainObject(val)) {
           defaultLocals = val
         }
       }
     }
   })
 
-  this.options = _.assign({
+  this.options = assign({
     compileDebug: false,
     pretty: false
   }, options)

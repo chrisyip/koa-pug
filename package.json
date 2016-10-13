@@ -28,7 +28,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "lodash": "^3.10.1",
+    "lodash.assign": "^3.2.0",
+    "lodash.camelcase": "^3.0.1",
+    "lodash.endswith": "^3.2.0",
+    "lodash.forin": "^3.0.2",
+    "lodash.isobject": "^3.0.2",
+    "lodash.isplainobject": "^3.2.0",
+    "lodash.merge": "^3.3.2",
     "pug": "^2.0.0-beta6"
   },
   "devDependencies": {

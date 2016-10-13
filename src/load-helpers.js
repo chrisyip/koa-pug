@@ -1,25 +1,27 @@
 'use strict'
 
-var _ = require('lodash')
+var isObject = require('lodash.isobject')
+var forIn = require('lodash.forin')
+var camelCase = require('lodash.camelcase')
 var fs = require('fs')
 var path = require('path')
 
 function loadHelpers (dirs) {
   var helpers = {}
 
-  if (_.isArray(dirs)) {
-    _.forEach(dirs, function (item) {
-      if (_.isObject(item)) {
-        _.forIn(item, function (value, key) {
-          if (_.isString(key)) {
-            if (_.isString(value)) {
+  if (Array.isArray(dirs)) {
+    dirs.forEach(function (item) {
+      if (isObject(item)) {
+        forIn(item, function (value, key) {
+          if (typeof key === 'string') {
+            if (typeof value === 'string') {
               load(value, key)
             } else {
               helpers[key] = value
             }
           }
         })
-      } else if (_.isString(item)) {
+      } else if (typeof item === 'string') {
         load(item)
       }
     })
@@ -32,18 +34,18 @@ function loadHelpers (dirs) {
     var stat = fs.statSync(fullPath)
 
     if (stat.isDirectory()) {
-      _.forEach(fs.readdirSync(dir), function (file) {
+      fs.readdirSync(dir).forEach(function (file) {
         load(dir + '/' + file)
       })
     } else if (stat.isFile()) {
       var mod = require(fullPath)
 
-      if (_.isString(moduleName)) {
+      if (typeof moduleName === 'string') {
         helpers[moduleName] = mod
-      } else if (_.isString(mod.moduleName)) {
+      } else if (typeof mod.moduleName === 'string') {
         helpers[mod.moduleName] = mod.moduleBody
       } else {
-        helpers[_.camelCase(path.basename(fullPath, path.extname(fullPath)))] = mod
+        helpers[camelCase(path.basename(fullPath, path.extname(fullPath)))] = mod
       }
     }
   }
