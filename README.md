@@ -189,7 +189,7 @@ Render template, and set rendered template to `this.body`.
 
 `tpl`: the path of template that based on `viewPath`, `.pug` is optional.
 
-`locals`: locals for this page. Optional. If `options` or `noCache` presented, please use `{}`, `undefined` or `null` for empty `locals`.
+`locals`: locals for this page. Optional. If `options` or `noCache` presented, please use `{}`, `undefined` or `null` for empty `locals`. `locals` will merge up with `ctx.state`(koa@2) or `this.state`(koa@1). Middlewares can assign locals to `ctx.state`.
 
 `options`: override global default options for this page. Only assigning an `object` or a `boolean` to it will take effects.
 
