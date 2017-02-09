@@ -66,7 +66,7 @@ function Pug (options) {
 
   /**
    * @param {String}  tpl     the template path, search start from viewPath
-   * @param {Object}  locals  locals that pass to Pug compiler, merged with global locals
+   * @param {Object}  locals  locals that pass to Pug compiler
    * @param {Object}  options options that pass to Pug compiler, merged with global default options
    * @param {Boolean} noCache use cache or not
    */
@@ -77,22 +77,33 @@ function Pug (options) {
       merge(compileOptions, options)
     }
 
-    var finalLocals = merge({}, helpers, defaultLocals, this.state, locals)
-
     if (compileOptions.fromString) {
-      this.body = compileString(tpl, finalLocals, compileOptions)
-    } else {
-      var skipCache
-
-      if (typeof options === 'boolean') {
-        skipCache = options
-      } else {
-        skipCache = typeof noCache === 'boolean' ? noCache : globalNoCache
-      }
-
-      this.body = compileFile(tpl, finalLocals, compileOptions, skipCache)
+      return compileString(tpl, locals, compileOptions)
     }
 
+    var skipCache
+
+    if (typeof options === 'boolean') {
+      skipCache = options
+    } else {
+      skipCache = typeof noCache === 'boolean' ? noCache : globalNoCache
+    }
+
+    return compileFile(tpl, locals, compileOptions, skipCache)
+  }
+
+  /**
+   * Render function that attached to app context
+   *
+   * @param {String}  tpl     the template path, search start from viewPath
+   * @param {Object}  locals  locals, will merged with global locals and ctx.state
+   * @param {Object}  options options that pass to Pug compiler, merged with global default options
+   * @param {Boolean} noCache use cache or not
+   */
+  function contextRenderer (tpl, locals, options, noCache) {
+    var finalLocals = merge({}, helpers, defaultLocals, this.state, locals)
+
+    this.body = renderer(tpl, finalLocals, options, noCache)
     this.type = 'text/html'
     return this
   }
@@ -101,15 +112,20 @@ function Pug (options) {
     use: {
       enumerable: true,
       value: function (app) {
-        app.context.render = renderer
+        app.context.render = contextRenderer
       }
+    },
+
+    render: {
+      enumerable: true,
+      value: renderer
     },
 
     middleware: {
       enumerable: true,
       get: util.deprecate(function () {
         return function* (next) {
-          this.render = renderer
+          this.render = contextRenderer
           yield next
         }
       }, 'koa-pug: Pug.middleware is deprecated, use Pug.use instead')

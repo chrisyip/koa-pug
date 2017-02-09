@@ -35,7 +35,7 @@
     "lodash.isobject": "^3.0.2",
     "lodash.isplainobject": "^3.2.0",
     "lodash.merge": "^3.3.2",
-    "pug": "^2.0.0-beta6"
+    "pug": "^2.0.0-beta11"
   },
   "devDependencies": {
     "bluebird": "^2.9.34",

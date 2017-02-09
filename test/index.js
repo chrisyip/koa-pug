@@ -80,7 +80,23 @@ describe('koa-pug', function () {
       pug.should.be.an('object')
     })
 
-    describe('render', function () {
+    describe('standalone render function', function () {
+      it('should render Pug template string', function () {
+        var pug = new Pug()
+        pug.render(
+          'h1 Hello, #{name}', { name: 'Pug' }, { fromString: true }
+        ).should.eql('<h1>Hello, Pug</h1>')
+      })
+
+      it('should render Pug file', function () {
+        var pug = new Pug({ viewPath: __dirname, basedir: __dirname })
+        var doc = $(pug.render('textuals/hello', { name: 'Pug' }))
+        doc.hasClass('content').should.be.true
+        doc.find('h1').text().should.eql('Hello, Pug')
+      })
+    })
+
+    describe('render w/ Koa context', function () {
       it('should render Pug template string', function (done) {
         var app = Koa()
         new Pug({ app: app })

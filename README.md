@@ -111,6 +111,8 @@ pug.use(app)
 
 ### use
 
+Binding `render` function to `app.context`. See [Koa's doc](https://github.com/koajs/koa/blob/master/docs/api/index.md#appcontext).
+
 ```js
 const Pug = require('koa-pug')
 const pug = new Pug()
@@ -122,7 +124,21 @@ app.use(function* () {
 })
 ```
 
-Binding `render` function to `app.context`. See [official doc](https://github.com/koajs/koa/blob/master/docs/api/index.md#appcontext).
+### render
+
+Render string or template file and return string directly.
+
+```js
+const pug = new Pug()
+pug.render('h1 Hello, #{name}', { name: 'Pug' }, { fromString: true })
+// outpus:
+// <h1>Hello Pug</h1>
+
+// rendering file
+const pug = new Pug({ viewPath: 'path/to/view' })
+// render path/to/view/hello.pug
+pug.render('hello', { name: 'Pug' })
+```
 
 ### middleware (deprecated)
 
