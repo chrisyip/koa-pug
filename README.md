@@ -95,7 +95,7 @@ pug.use(app)
 
 `viewPath`: where Pug templates be stored. Default is `process.cwd()`.
 
-`pretty` and `compileDebug`: see Pug's [docs](http://pug-lang.com/api/). Default is `false`.
+`pretty` and `compileDebug`: see Pug's [docs](https://pugjs.org). Default is `false`.
 
 `debug`: shorthand for `pretty` and `compileDebug`. Default is `false`.
 
