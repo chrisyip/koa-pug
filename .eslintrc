@@ -29,7 +29,7 @@
     ],
     "no-div-regex": 1,
     "strict": 0,
-    "space-after-keywords": [2, "always"],
+    "keyword-spacing": [2, { "after": true }],
     "quote-props": [2, "as-needed"],
     "no-process-exit": 0,
     "no-new-require": 2,
