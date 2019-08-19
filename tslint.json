@@ -1,0 +1,24 @@
+{
+  "extends": "tslint-config-standard",
+  "rules": {
+    "align": false,
+    "typedef": false,
+    "ban-types": false,
+    "no-unsafe-any": false,
+    "completed-docs": [
+      true,
+      {
+        "methods": {
+          "privacies": [
+            "public"
+          ]
+        },
+        "functions": {
+          "visibilities": [
+            "exported"
+          ]
+        }
+      }
+    ]
+  }
+}

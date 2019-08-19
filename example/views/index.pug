@@ -14,25 +14,24 @@ block content
     ```
 
     ```js
-    var koa = require('koa')
-      , pug = require('koa-pug')
-      , app = koa()
+    const Koa = require('koa')
+    const KoaPug = require('koa-pug')
+    const app = nwe Koa()
 
-    app.use(pug.middleware({
+    new KoaPug({
       viewPath: __dirname + '/views',
-      debug: false,
-      pretty: false,
-      compileDebug: false,
+      debug: true,
       locals: global_locals_for_all_pages,
       helperPath: [
         'helpers/',
         { 'random': './lib/random.js' },
         { '_': require('lodash') }
-      ]
-    }))
+      ],
+      app
+    })
 
-    app.use(function* () {
-      yield this.render('index', locals_for_this_page)
+    app.use(ctx => {
+      ctx.render('index', locals_for_this_page)
     })
 
     app.listen(3000)

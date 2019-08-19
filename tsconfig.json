@@ -1,0 +1,32 @@
+{
+  "extends": "@sindresorhus/tsconfig",
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "es2017",
+    "esModuleInterop": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    "lib": [
+      "es2017"
+    ]
+  },
+  "include": [
+    "source"
+  ],
+  "typedocOptions": {
+    "out": "docs",
+    "mode": "file",
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "ignoreCompilerErrors": true,
+    "excludePrivate": true,
+    "excludeNotExported": true,
+    "stripInternal": true,
+    "suppressExcessPropertyErrors": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "theme": "minimal",
+    "hideGenerator": true,
+    "readme": "readme.md"
+  }
+}
