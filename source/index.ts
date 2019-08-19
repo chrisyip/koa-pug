@@ -146,7 +146,6 @@ export class KoaPug {
     app.context.render = async function (tpl: string, locals?: any, options?: any) {
       const ctx = this
       const finalLocals = merge({}, self.helpers, self.defaultLocals, ctx.state, locals)
-      console.log('compile', await self.render(tpl, finalLocals, options))
       ctx.body = await self.render(tpl, finalLocals, options)
       ctx.type = 'text/html'
     }
