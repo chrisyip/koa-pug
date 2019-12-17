@@ -4,6 +4,8 @@
 
 A [Pug](https://github.com/pugjs) middleware for [Koa](http://koajs.com/).
 
+*For TypeScript user: `koa-pug` requires TypeScript@^3.2.*
+
 # How to use
 
 ```bash
