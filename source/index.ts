@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import pug from 'pug'
-import Koa from 'koa'
+import Koa = require('koa')
 import merge from 'lodash.merge'
 import isPlainObject from 'lodash.isplainobject'
 import forIn from 'lodash.forin'
