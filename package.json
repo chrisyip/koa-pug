@@ -34,7 +34,7 @@
     "@types/lodash.merge": "^4.6.6",
     "@types/node": "^10.12.21",
     "@types/pug": "^2.0.4",
-    "ava": "^1.0.1",
+    "ava": "^3.8.2",
     "cheerio": "^1.0.0-rc.3",
     "del-cli": "^1.1.0",
     "got": "^9.6.0",
@@ -42,20 +42,20 @@
     "koa": "^2.7.0",
     "koa-router": "^7.4.0",
     "ts-node": "^8.3.0",
+    "tsconfig-paths": "^3.9.0",
     "tslint": "^5.12.0",
     "tslint-config-standard": "^8.0.1",
-    "typedoc": "^0.15.0",
+    "typedoc": "^0.17.7",
     "typescript": "~3.5.2"
   },
   "types": "dist",
   "ava": {
-    "babel": false,
-    "compileEnhancements": false,
     "extensions": [
       "ts"
     ],
     "require": [
-      "ts-node/register"
+      "ts-node/register",
+      "tsconfig-paths/register"
     ]
   },
   "dependencies": {
