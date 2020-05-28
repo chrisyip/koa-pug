@@ -160,7 +160,7 @@ module.exports.default = KoaPug
 
 declare module 'koa' {
   export interface BaseContext {
-    render: (tpl: string, locals?: any, options?: RenderOptions, noCache?: boolean) => void
+    render: (tpl: string, locals?: any, options?: RenderOptions, noCache?: boolean) => Promise<void>
   }
 }
 
