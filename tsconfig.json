@@ -1,6 +1,7 @@
 {
   "extends": "@sindresorhus/tsconfig",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "dist",
     "target": "es2017",
     "esModuleInterop": true,
