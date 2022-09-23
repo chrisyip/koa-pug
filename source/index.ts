@@ -141,11 +141,11 @@ export class KoaPug {
    * Bind render function to Koa context
    * @param app Koa instance
    */
-  use (app: Koa) {
+  use <StateT = Koa.DefaultState, CustomT = Koa.DefaultContext>(app: Koa<StateT, CustomT>) {
     const self = this
     app.context.render = async function (tpl: string, locals?: any, options?: any) {
       const ctx = this
-      const finalLocals = merge({}, self.helpers, self.defaultLocals, ctx.state, locals)
+      const finalLocals = merge({}, self.helpers, self.defaultLocals, (ctx as any).state, locals)
       ctx.body = await self.render(tpl, finalLocals, options)
       ctx.type = 'text/html'
     }
@@ -164,13 +164,13 @@ declare module 'koa' {
   }
 }
 
-interface PugOptions extends pug.Options {
+interface PugOptions<StateT = Koa.DefaultState, CustomT = Koa.DefaultContext> extends pug.Options {
   [key: string]: any
 
   /**
    * Koa instance
    */
-  app?: Koa
+  app?: Koa<StateT, CustomT>
 
   /**
    * Paths of helpers.
