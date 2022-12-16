@@ -59,7 +59,6 @@
     ]
   },
   "dependencies": {
-    "fs-extra": "^9.1.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.forin": "^4.4.0",
     "lodash.isobject": "^3.0.2",
