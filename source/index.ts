@@ -141,7 +141,7 @@ export class KoaPug {
    * Bind render function to Koa context
    * @param app Koa instance
    */
-  use <StateT = Koa.DefaultState, CustomT = Koa.DefaultContext>(app: Koa<StateT, CustomT>) {
+  use <StateT = Koa.DefaultState, CustomT = Koa.DefaultContext> (app: Koa<StateT, CustomT>) {
     const self = this
     app.context.render = async function (tpl: string, locals?: any, options?: any) {
       const ctx = this
