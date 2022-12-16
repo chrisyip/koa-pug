@@ -37,7 +37,7 @@
     "ava": "^3.8.2",
     "cheerio": "^1.0.0-rc.3",
     "del-cli": "^1.1.0",
-    "got": "^9.6.0",
+    "got": "^11.8.5",
     "jstransformer-markdown-it": "^2.1.0",
     "koa": "^2.7.0",
     "koa-router": "^7.4.0",
