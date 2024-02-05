@@ -1,6 +1,7 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import path from 'path'
+import camelcase from 'camelcase'
 
 import Pug from '../source'
 
@@ -11,7 +12,7 @@ const pug = new Pug({
   viewPath: path.resolve(__dirname, 'views'),
   helperPath: [
     path.resolve(__dirname, 'helpers'),
-    { camelCase: require('lodash.camelcase') }
+    { camelCase: camelcase }
   ],
   locals: {
     page_title: 'Koa-pug example',

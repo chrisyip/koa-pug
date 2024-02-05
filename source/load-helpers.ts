@@ -1,17 +1,16 @@
 import path from 'path'
 import fs from 'fs'
-import isObject from 'lodash.isobject'
-import forIn from 'lodash.forin'
-import camelCase from 'lodash.camelcase'
+import forIn from './for-in'
+import camelCase from 'camelcase'
 import assert from 'assert'
 
-function loadHelpers (dirs: string | string[]) {
+function loadHelpers (dirs: any | any[]) {
   const helpers: { [key: string]: (...args: any[]) => any } = {}
 
   if (Array.isArray(dirs)) {
     dirs.forEach(function (item) {
-      if (isObject(item)) {
-        forIn(item, function (value, key) {
+      if (typeof item === 'object' && item != null && !Array.isArray(item)) {
+        forIn(item, function (value: any, key: string) {
           if (typeof value === 'string') {
             load(value, key)
           } else {

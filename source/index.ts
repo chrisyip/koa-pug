@@ -1,12 +1,12 @@
 import { promises as fs } from 'fs'
 import pug from 'pug'
 import Koa from 'koa'
-import merge from 'lodash.merge'
-import isPlainObject from 'lodash.isplainobject'
-import forIn from 'lodash.forin'
+import isPlainObject from 'is-plain-obj'
 import path from 'path'
 import assert from 'assert'
 
+import merge from 'extend'
+import forIn from './for-in'
 import loadHelpers from './load-helpers'
 
 export class KoaPug {
@@ -60,7 +60,7 @@ export class KoaPug {
     }
 
     const nonPugKeys = ['viewPath', 'locals', 'helperPath', 'app']
-    forIn(options, (value, key) => {
+    forIn(options, (value: any, key: string) => {
       if (!nonPugKeys.includes(key)) {
         this.defaultOptions[key] = value
       }
@@ -127,7 +127,7 @@ export class KoaPug {
     const compileOptions: RenderOptions = merge({}, this.defaultOptions) as RenderOptions
 
     if (isPlainObject(options)) {
-      merge(compileOptions, options)
+      merge(compileOptions, options as { [key: string]: any })
     }
 
     if (compileOptions.fromString) {

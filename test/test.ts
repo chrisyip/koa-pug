@@ -3,7 +3,7 @@ import $ from 'cheerio'
 import got from 'got'
 import Koa from 'koa'
 import { AddressInfo } from 'net'
-import isplainobject from 'lodash.isplainobject'
+import isplainObject from 'is-plain-obj'
 
 import Pug from '../source'
 import app from '../example/app'
@@ -23,8 +23,8 @@ test('new Pug()', async t => {
   const pug = new Pug()
   t.true(typeof pug === 'object')
   t.true(pug != null)
-  t.true(isplainobject(pug.options))
-  t.true(isplainobject(pug.locals))
+  t.true(isplainObject(pug.options))
+  t.true(isplainObject(pug.locals))
 
   let html = await pug.render('h1 Hello, #{name}', { name: 'Pug' }, { fromString: true })
   t.is(html, '<h1>Hello, Pug</h1>')
@@ -96,7 +96,7 @@ test('Pug.use(app) attaches "render()" to Koa Context', async t => {
 })
 
 test('Support helpers', async t => {
-  let res = await got(`${serverUrl}/to-camel`, { query: { name: 'koa-pug' } })
+  let res = await got(`${serverUrl}/to-camel?name=koa-pug`)
   t.is(res.body, 'koaPug')
 
   res = await got(`${serverUrl}`)
