@@ -94,7 +94,7 @@ ctx.type = 'text/plain'
 
 ## Global Helpers
 
-By setting `helperPath`, koa-pug will load all the modules that under sepecified folder, and make them available on all templates.
+By setting `helperPath`, koa-pug will load all the modules that under specified folder, and make them available on all templates.
 
 `helperPath` also could be an array including folders, files path, even `moduleName: 'path/to/lib.js` mapping object. Also support node module as a helper, just like: `'_': require('lodash')`
 
