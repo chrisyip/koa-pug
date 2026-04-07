@@ -27,7 +27,7 @@ const pug = new Pug({
     { random: 'path/to/lib/random.js' },
     { _: require('lodash') }
   ],
-  app: app // Binding `ctx.render()`, equals to pug.use(app)
+  app: app // Binding `ctx.render()`, equivalent to pug.use(app)
 })
 
 pug.locals.someKey = 'some value'
