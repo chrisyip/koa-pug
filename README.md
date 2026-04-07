@@ -110,7 +110,7 @@ module.exports = function (input) {
 Equals to:
 
 ```js
-// Becasue of there is a `moduleName`, `koa-pug` will use it as module name instead of filename
+// Because of there is a `moduleName`, `koa-pug` will use it as module name instead of filename
 module.exports = {
   moduleName: 'formatDate',
   moduleBody (input) {
