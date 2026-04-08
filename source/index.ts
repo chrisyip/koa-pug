@@ -118,7 +118,7 @@ export class KoaPug {
   }
 
   /**
-   * Render Pug tamplate
+   * Render Pug template
    * @param tpl Template string or the path of template file
    * @param locals Variables and helpers that passed to Pug compiler
    * @param options

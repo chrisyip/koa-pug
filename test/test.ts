@@ -49,7 +49,7 @@ test('Auto add `.pug` extname', async t => {
   t.is(res.body, 'foo.pug')
 })
 
-test('Try to render `index.pug` if no .pug file specificed', async t => {
+test('Try to render `index.pug` if no .pug file specified', async t => {
   let res: any
 
   res = await got(`${serverUrl}/home`)

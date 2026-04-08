@@ -27,7 +27,7 @@ const pug = new Pug({
     { random: 'path/to/lib/random.js' },
     { _: require('lodash') }
   ],
-  app: app // Binding `ctx.render()`, equals to pug.use(app)
+  app: app // Binding `ctx.render()`, equivalent to pug.use(app)
 })
 
 pug.locals.someKey = 'some value'
@@ -94,7 +94,7 @@ ctx.type = 'text/plain'
 
 ## Global Helpers
 
-By setting `helperPath`, koa-pug will load all the modules that under sepecified folxder, and make them available on all templates.
+By setting `helperPath`, koa-pug will load all the modules that under specified folder, and make them available on all templates.
 
 `helperPath` also could be an array including folders, files path, even `moduleName: 'path/to/lib.js` mapping object. Also support node module as a helper, just like: `'_': require('lodash')`
 
@@ -110,7 +110,7 @@ module.exports = function (input) {
 Equals to:
 
 ```js
-// Becasue of there is a `moduleName`, `koa-pug` will use it as module name instead of filename
+// Because of there is a `moduleName`, `koa-pug` will use it as module name instead of filename
 module.exports = {
   moduleName: 'formatDate',
   moduleBody (input) {
